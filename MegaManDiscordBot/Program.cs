@@ -8,6 +8,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MegaManDiscordBot.Services.Configuration;
+using MegaManDiscordBot.Services.Common;
 
 namespace MegaManDiscordBot
 {
@@ -21,20 +22,15 @@ namespace MegaManDiscordBot
         private Config _config;
         private CommandHandler _handler;
 
-        private const string AppName = "Mega Man Bot";
-        private const string AppUrl = "";
-
         public async Task Start()
         {
-            // Define the DiscordSocketClient            
+            PrettyConsole.NewLine("~~   Mega Man Bot Booting Up  ~~");
+            PrettyConsole.NewLine();
+         
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                MessageCacheSize = 1000,
-#if DEBUG
+                MessageCacheSize = 100,
                 LogLevel = LogSeverity.Debug,
-#else
-                LogLevel = LogSeverity.Verbose,
-#endif
             });
             _config = Config.Load();
             var serviceProvider = ConfigureServices();
@@ -42,6 +38,7 @@ namespace MegaManDiscordBot
             // Login and connect to Discord.
             await _client.LoginAsync(TokenType.Bot, _config.Token);
             await _client.StartAsync();
+            _client.Log += LogAsync;
 
             _handler = new CommandHandler(serviceProvider);
             await _handler.ConfigureAsync();
@@ -62,9 +59,9 @@ namespace MegaManDiscordBot
             return provider;
         }
 
-        private Task Log(LogMessage msg)
+        private Task LogAsync(LogMessage msg)
         {
-            Console.WriteLine(msg.ToString());
+            PrettyConsole.LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
             return Task.CompletedTask;
         }
     }

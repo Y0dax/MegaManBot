@@ -25,6 +25,7 @@ namespace MegaManDiscordBot
             _client = _provider.GetService<DiscordSocketClient>();
             _client.MessageReceived += ProcessCommandAsync;
             _commands = _provider.GetService<CommandService>();
+            //_commands.Log += LogAsync;
             _config = _provider.GetService<Config>();
         }
 
