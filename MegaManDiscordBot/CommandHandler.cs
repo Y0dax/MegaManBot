@@ -19,8 +19,6 @@ namespace MegaManDiscordBot
         private readonly DiscordSocketClient _client;
         private readonly Config _config;
 
-        //private IEnumerable<ulong> Whitelist => _config.ChannelWhitelist;
-
         public CommandHandler(IServiceProvider provider)
         {
             _provider = provider;
@@ -35,44 +33,26 @@ namespace MegaManDiscordBot
         {
             //await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await _commands.AddModuleAsync<PublicModule>();
+            await _commands.AddModuleAsync<GiphyModule>();
         }
-
 
         private async Task ProcessCommandAsync(SocketMessage pMsg)
         {
             var msg = pMsg as SocketUserMessage;
-            if (msg == null)                                          // Check if the received message is from a user.
+            if (msg == null)
                 return;
 
-            var context = new SocketCommandContext(_client, msg);     // Create a new command context.
+            var context = new SocketCommandContext(_client, msg);
 
-            int argPos = 0;                                           // Check if the message has either a string or mention prefix.
+            int argPos = 0;
             if (msg.HasStringPrefix(_config.CommandString, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
-            {                                                         // Try and execute a command with the given context.
+            {
                 var result = await _commands.ExecuteAsync(context, argPos, _provider);
 
-                if (!result.IsSuccess)                                // If execution failed, reply with the error message.
+                if (!result.IsSuccess) // If execution failed, reply with the error message.
                     await context.Channel.SendMessageAsync(result.ToString());
             }
         }
-
-        //private bool ParseTriggers(SocketUserMessage message, ref int argPos)
-        //{
-        //    bool flag = false;
-        //    if (message.HasMentionPrefix(_client.CurrentUser, ref argPos)) flag = true;
-        //    else
-        //    {
-        //        foreach (var prefix in _config.CommandString)
-        //        {
-        //            if (message.HasStringPrefix(prefix, ref argPos))
-        //            {
-        //                flag = true;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    return flag ? Whitelist.Any(id => id == message.Channel.Id) : false;
-        //}
     }
 }

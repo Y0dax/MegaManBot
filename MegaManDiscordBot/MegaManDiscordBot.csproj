@@ -154,10 +154,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
+    <Compile Include="Modules\Public\GiphyModule.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Common\AccessLevel.cs" />
+    <Compile Include="Services\Common\ApiHandler.cs" />
+    <Compile Include="Services\Common\Extensions.cs" />
     <Compile Include="Services\Common\MinPermissionsAttribute.cs" />
     <Compile Include="Services\Common\PrettyConsole.cs" />
     <Compile Include="Services\Configuration\Configuration.cs" />
