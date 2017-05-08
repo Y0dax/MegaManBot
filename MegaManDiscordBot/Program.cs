@@ -22,6 +22,7 @@ namespace MegaManDiscordBot
         private Config _config;
         private CommandHandler _handler;
 
+
         public async Task Start()
         {
             PrettyConsole.NewLine("~~   Mega Man Bot Booting Up  ~~");

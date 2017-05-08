@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using MegaManDiscordBot.Services.Configuration;
+using MegaManDiscordBot.Services.Common;
+using MegaManDiscordBot.Modules.Public;
 
 namespace MegaManDiscordBot
 {
@@ -25,14 +27,16 @@ namespace MegaManDiscordBot
             _client = _provider.GetService<DiscordSocketClient>();
             _client.MessageReceived += ProcessCommandAsync;
             _commands = _provider.GetService<CommandService>();
-            //_commands.Log += LogAsync;
+            //_commands.Log += PrettyConsole.Log();
             _config = _provider.GetService<Config>();
         }
 
         public async Task ConfigureAsync()
         {
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            //await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModuleAsync<PublicModule>();
         }
+
 
         private async Task ProcessCommandAsync(SocketMessage pMsg)
         {

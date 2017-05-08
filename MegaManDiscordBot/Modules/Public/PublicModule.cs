@@ -12,7 +12,14 @@ namespace MegaManDiscordBot.Modules.Public
 {
     class PublicModule : ModuleBase<SocketCommandContext>
     {
-        [Command("echo"), Alias("echo", "Echo")]
+
+        [Command("test")]
+        public async Task Test()
+        {
+            await ReplyAsync("Test");
+        }
+
+        [Command("echo")]
         [Remarks("Make the bot repeat a phrase")]
         //[MinPermissions(AccessLevel.ServerAdmin)]
         public async Task Echo([Remainder]string text)
@@ -22,7 +29,7 @@ namespace MegaManDiscordBot.Modules.Public
 
         [Command("info")]
         [Remarks("Get info on a user")]
-        [MinPermissions(AccessLevel.User)]
+        //[MinPermissions(AccessLevel.User)]
         public async Task UserInfo([Remainder]SocketGuildUser user)
         {
             //var userStrings = user.Contains("#") ? user.Split('#') : null;
