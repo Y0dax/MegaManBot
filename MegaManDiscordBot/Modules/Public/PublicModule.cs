@@ -7,6 +7,9 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MegaManDiscordBot.Services.Common;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace MegaManDiscordBot.Modules.Public
 {
@@ -32,36 +35,60 @@ namespace MegaManDiscordBot.Modules.Public
         //[MinPermissions(AccessLevel.User)]
         public async Task UserInfo([Remainder]SocketGuildUser user)
         {
-            //var userStrings = user.Contains("#") ? user.Split('#') : null;
             StringBuilder returnMesage = new StringBuilder();
-            //ushort userid;
-            //if (userStrings == null || userStrings.Length != 2 || String.IsNullOrEmpty(userStrings[0]) ||
-            //    String.IsNullOrEmpty(userStrings[1]) || !ushort.TryParse(userStrings[1], out userid))
-            //{
-            //    await ReplyAsync("Invalid username provided. Use quotes, include the #ID, and format such as \"Mega Man#3043\" or \"Name#1234\".");
-            //    return;
-            //}
-
-            //var foundUser = Context.Guild.GetUser(userStrings[0], ushort.Parse(userStrings[1]));
-            //if (foundUser == null)
-            //{
-            //    await ReplyAsync($"{e.GetArg("User")} was not found on the server.");
-            //    return;
-            //}
-
-            //if (foundUser == e.User.Server.GetUser(_client.CurrentUser.Id))
-            //{
-            //    await ReplyAsync("I'm Mega Man, duh.");
-            //    return;
-            //}
-
             returnMesage.Append($" {user.Mention} joined the {user.Guild.Name} on {user.JoinedAt.Value.ToLocalTime()}.");
-            returnMesage.Append(user.Status != null ? $" {user.Nickname ?? user.Username} is currently {user.Status}" : "");
+            returnMesage.Append($" {user.Nickname ?? user.Username} is currently {user.Status}");
             returnMesage.Append(user.Game.Value.Name != null ? $" and is playing {user.Game.Value.Name}." : "");
             //returnMesage.Append(user.Status?.Value == "online" && user.JoinedAt != null ? $" They were last active at {user.LastActivityAt.Value.ToLocalTime()}." : "");
 
             await ReplyAsync(returnMesage.ToString());
         }
+
+        public class GiphySearchResult
+        {
+            [JsonProperty("data")]
+            public Data[] Data { get; set; }
+
+
+        }
+        public class Data
+        {
+            [JsonProperty("type")]
+            public string Type { get; set; }
+
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("url")]
+            public string Url { get; set; }
+        }
+
+        [Command("gif")]
+        [Remarks("Get a gihpy")]
+        //[MinPermissions(AccessLevel.User)]
+        public async Task UserInfo([Remainder]string searchText)
+        {
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://api.giphy.com/v1/gifs/search");
+
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            string urlParameters = String.Format("?q={0}&api_key=dc6zaTOxFJmzC", searchText.Replace(" ", "+"));
+
+            HttpResponseMessage response = await client.GetAsync(urlParameters);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var gifResults = JsonConvert.DeserializeObject<GiphySearchResult>(responseContent);
+
+                await ReplyAsync(gifResults.Data.FirstOrDefault().Url);
+            }
+            
+        }
+
+
 
         //_client.GetService<CommandService>().CreateCommand("info")
         //    .Description("Gets general information about the bot")
