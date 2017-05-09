@@ -37,6 +37,9 @@ namespace MegaManDiscordBot.Services.Configuration
             //}
         };
 
+        [JsonProperty("latestxkcd")]
+        public int LatestXKCD { get; set; } = 15;
+
         public static Config Load()
         {
             if (File.Exists("config.json"))

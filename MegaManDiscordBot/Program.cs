@@ -11,10 +11,13 @@ using MegaManDiscordBot.Services.Configuration;
 using MegaManDiscordBot.Services.Common;
 
 namespace MegaManDiscordBot
-{
+{ 
+    public class Globals
+    {
+        public static int xkcdNum { get; set; } = 1830;
+    }
     public class Program
     {
-
         public static void Main(string[] args) =>
             new Program().Start().GetAwaiter().GetResult();
 

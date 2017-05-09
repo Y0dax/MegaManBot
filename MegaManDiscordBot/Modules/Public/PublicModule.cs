@@ -15,7 +15,6 @@ namespace MegaManDiscordBot.Modules.Public
 {
     class PublicModule : ModuleBase<SocketCommandContext>
     {
-
         [Command("test")]
         public async Task Test()
         {
