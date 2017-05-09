@@ -14,15 +14,16 @@ namespace MegaManDiscordBot.Modules.Public
     class GiphyModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://api.giphy.com/v1/gifs/";
+        static string key = $"api_key={Globals.GiphyKey}";
 
         [Command("gif")]
         [Remarks("Search for a giphy")]
-        //[MinPermissions(AccessLevel.User)]
-        public async Task GiphySearch([Remainder]string searchText)
+        [MinPermissions(AccessLevel.User)]
+        public async Task GiphySearch([Remainder]string searchString)
         {
             
-            Uri giphyUri = new Uri(String.Format("{0}search?q={1}&api_key=dc6zaTOxFJmzC", baseUrl, searchText.Replace(" ", "+")));
-            ApiResponse<GiphySearchResult> response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(giphyUri);
+            Uri uri = new Uri($"{baseUrl}search?q={searchString.Replace(" ", "+")}&{key}");
+            ApiResponse<GiphySearchResult> response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Data.Any())
             {
                 await ReplyAsync(response.responseObject.Data.RandomItem().Url);
@@ -31,11 +32,11 @@ namespace MegaManDiscordBot.Modules.Public
 
         [Command("gif")]
         [Remarks("Get a random giphy")]
-        //[MinPermissions(AccessLevel.User)]
+        [MinPermissions(AccessLevel.User)]
         public async Task GiphyRandom()
         {
-            Uri giphyUri = new Uri(String.Format("{0}random?api_key=dc6zaTOxFJmzC", baseUrl));
-            ApiResponse<GiphySingleResult> response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(giphyUri);
+            Uri uri = new Uri($"{baseUrl}random?{key}");
+            ApiResponse<GiphySingleResult> response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Data != null)
             {
                 await ReplyAsync(response.responseObject.Data.Url);
@@ -44,11 +45,11 @@ namespace MegaManDiscordBot.Modules.Public
 
         [Command("tgif")]
         [Remarks("Get a giphy by translation")]
-        //[MinPermissions(AccessLevel.User)]
-        public async Task GiphyTranslate([Remainder]string searchText)
+        [MinPermissions(AccessLevel.User)]
+        public async Task GiphyTranslate([Remainder]string searchString)
         {
-            Uri giphyUri = new Uri(String.Format("{0}translate?s={1}&api_key=dc6zaTOxFJmzC", baseUrl, searchText.Replace(" ", "+")));
-            ApiResponse<GiphySingleResult> response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(giphyUri);
+            Uri uri = new Uri($"{baseUrl}translate?s={searchString.Replace(" ", "+")}&{key}");
+            ApiResponse<GiphySingleResult> response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Data != null)
             {
                 await ReplyAsync(response.responseObject.Data.Url);

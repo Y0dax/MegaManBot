@@ -35,6 +35,8 @@ namespace MegaManDiscordBot
             await _commands.AddModuleAsync<PublicModule>();
             await _commands.AddModuleAsync<GiphyModule>();
             await _commands.AddModuleAsync<XKCDModule>();
+            await _commands.AddModuleAsync<WeatherModule>();
+            await _commands.AddModuleAsync<BreweryModule>();
         }
 
         private async Task ProcessCommandAsync(SocketMessage pMsg)

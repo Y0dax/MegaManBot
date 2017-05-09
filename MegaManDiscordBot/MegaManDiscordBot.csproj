@@ -154,8 +154,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
+    <Compile Include="Modules\Public\BreweryModule.cs" />
     <Compile Include="Modules\Public\GiphyModule.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
+    <Compile Include="Modules\Public\WeatherModule.cs" />
     <Compile Include="Modules\Public\XKCDModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

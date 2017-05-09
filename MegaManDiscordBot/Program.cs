@@ -14,7 +14,17 @@ namespace MegaManDiscordBot
 { 
     public class Globals
     {
+        public static void Initiate(Config config)
+        {
+            Globals.WeatherKey = config.WeatherKey;
+            Globals.BreweryKey = config.BreweryKey;
+            Globals.GiphyKey = config.GiphyKey;
+        }
+
         public static int xkcdNum { get; set; } = 1830;
+        public static string WeatherKey { get; set; }
+        public static string BreweryKey { get; set; }
+        public static string GiphyKey { get; set; }
     }
     public class Program
     {
@@ -36,7 +46,10 @@ namespace MegaManDiscordBot
                 MessageCacheSize = 100,
                 LogLevel = LogSeverity.Debug,
             });
+
             _config = Config.Load();
+            Globals.Initiate(_config);
+
             var serviceProvider = ConfigureServices();
 
             // Login and connect to Discord.

@@ -15,13 +15,13 @@ namespace MegaManDiscordBot.Modules.Public
         static string baseUrl = $"http://xkcd.com/";
         static Random rand = new Random();
 
-        [Command("xkcd")]
+        [Command("xkcdtoday")]
         [Remarks("Get the most recent xkcd")]
-        //[MinPermissions(AccessLevel.User)]
+        [MinPermissions(AccessLevel.User)]
         public async Task GetLatestXKCD()
         {
-            Uri giphyUri = new Uri(baseUrl + "info.0.json");
-            ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(giphyUri);
+            Uri uri = new Uri(baseUrl + "info.0.json");
+            ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Url != null)
             {
                 await ReplyAsync(response.responseObject.Title + ": " + response.responseObject.Url);
@@ -30,17 +30,16 @@ namespace MegaManDiscordBot.Modules.Public
             }
         }
 
-        [Command("randXKCD")]
+        [Command("xkcd")]
         [Remarks("Get a random xkcd")]
-        //[MinPermissions(AccessLevel.User)]
+        [MinPermissions(AccessLevel.User)]
         public async Task GetRandomXKCD()
         {
-            Uri giphyUri = new Uri(String.Format("{0}{1}/info.0.json", baseUrl, rand.Next(1, Globals.xkcdNum)));
-            ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(giphyUri);
+            Uri uri = new Uri(String.Format("{0}{1}/info.0.json", baseUrl, rand.Next(1, Globals.xkcdNum)));
+            ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Url != null)
             {
                 await ReplyAsync(response.responseObject.Title + ": " + response.responseObject.Url);
-                await ReplyAsync(Globals.xkcdNum.ToString());
             }
         }
 

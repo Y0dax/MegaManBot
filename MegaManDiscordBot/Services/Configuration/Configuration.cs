@@ -11,6 +11,16 @@ namespace MegaManDiscordBot.Services.Configuration
 
         [JsonProperty("token")]
         public string Token { get; set; }
+
+        [JsonProperty("weather_key")]
+        public string WeatherKey { get; set; } = "";
+
+        [JsonProperty("brewery_Key")]
+        public string BreweryKey { get; set; } = "";
+
+        [JsonProperty("giphy_Key")]
+        public string GiphyKey { get; set; } = "dc6zaTOxFJmzC";
+
         [JsonProperty("command_activation_strings")]
         public string CommandString { get; set; } = "!";
 
@@ -37,9 +47,6 @@ namespace MegaManDiscordBot.Services.Configuration
             //}
         };
 
-        [JsonProperty("latestxkcd")]
-        public int LatestXKCD { get; set; } = 15;
-
         public static Config Load()
         {
             if (File.Exists("config.json"))
@@ -49,6 +56,7 @@ namespace MegaManDiscordBot.Services.Configuration
             }
             var config = new Config();
             config.Save();
+
             throw new InvalidOperationException("configuration file created; insert token and restart.");
         }
 
