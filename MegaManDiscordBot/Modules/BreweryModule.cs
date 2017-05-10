@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MegaManDiscordBot.Modules.Public
+namespace MegaManDiscordBot.Modules
 {
-    class BreweryModule : ModuleBase<SocketCommandContext>
+    public class BreweryModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://api.brewerydb.com/v2/";
         static string key = $"key={Globals.BreweryKey}";
@@ -25,12 +25,22 @@ namespace MegaManDiscordBot.Modules.Public
             ApiResponse<BrewerySearchResponse> response = await new ApiHandler<BrewerySearchResponse>().GetJSONAsync(uri);
             if (response.Success && response.responseObject != null && response.responseObject.status == "success")
             {
-                var beer = response.responseObject.data.First();
-                await ReplyAsync($"Found: {Format.Bold(beer.name)}!\n\n" +
-                    (beer.description != null ? $"{beer.description}\n\n" : "") +
-                    $"Style: {beer.style.name}\n" +
-                    (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
-                    (beer.IBU != null ? $"IBU: {beer.IBU}": ""));
+                if (response.responseObject.data != null && response.responseObject.data.Any())
+                {
+                    var beer = response.responseObject.data.Where(p => p.name == searchString).FirstOrDefault() ?? response.responseObject.data.First();
+                    await ReplyAsync(
+                        $"I found {Format.Bold(beer.name)}!\n\n" +
+                        Format.Code($"Style: {beer.style.name}\n" +
+                        (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
+                        (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
+                        (beer.description != null ? $"\n{beer.description}\n\n" : "")) +
+                        (beer.labels?.medium != null ? $"{beer.labels.medium}" : "")
+                        );
+                }
+                else
+                {
+                    await ReplyAsync("Sorry, I couldn't find your beer.");
+                }
             }
         }
 
@@ -41,13 +51,17 @@ namespace MegaManDiscordBot.Modules.Public
         {
             Uri uri = new Uri($"{baseUrl}beer/random?{key}");
             ApiResponse<BreweryRandomResponse> response = await new ApiHandler<BreweryRandomResponse>().GetJSONAsync(uri);
-            if (response.Success && response.responseObject != null && response.responseObject.status == "success")
+            if (response.Success && response.responseObject != null && response.responseObject.status == "success" && response.responseObject.data != null)
             {
-                var beer = response.responseObject.data;
-               await ReplyAsync($"Try a glass of {Format.Bold(beer.name)}!\n" +
-                   $"Style: {beer.style.name}\n" +
-                   (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
-                   (beer.IBU != null ? $"IBU: {beer.IBU}" : ""));
+               var beer = response.responseObject.data;
+                await ReplyAsync(
+                    $"Try a pint of {Format.Bold(beer.name)}!\n\n" +
+                    Format.Code($"Style: {beer.style.name}\n" +
+                    (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
+                    (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
+                    (beer.description != null ? $"\n{beer.description}\n\n" : "")) +
+                    (beer.labels?.medium != null ? $"{beer.labels.medium}" : "")
+                    );
             }
         }
 

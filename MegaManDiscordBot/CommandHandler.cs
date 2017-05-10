@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MegaManDiscordBot.Services.Configuration;
 using MegaManDiscordBot.Services.Common;
-using MegaManDiscordBot.Modules.Public;
+using MegaManDiscordBot.Modules;
 
 namespace MegaManDiscordBot
 {
@@ -31,12 +31,7 @@ namespace MegaManDiscordBot
 
         public async Task ConfigureAsync()
         {
-            //await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _commands.AddModuleAsync<PublicModule>();
-            await _commands.AddModuleAsync<GiphyModule>();
-            await _commands.AddModuleAsync<XKCDModule>();
-            await _commands.AddModuleAsync<WeatherModule>();
-            await _commands.AddModuleAsync<BreweryModule>();
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
         private async Task ProcessCommandAsync(SocketMessage pMsg)
@@ -53,8 +48,8 @@ namespace MegaManDiscordBot
             {
                 var result = await _commands.ExecuteAsync(context, argPos, _provider);
 
-                if (!result.IsSuccess) // If execution failed, reply with the error message.
-                    await context.Channel.SendMessageAsync(result.ToString());
+                //if (!result.IsSuccess) // If execution failed, reply with the error message.
+                //    await context.Channel.SendMessageAsync(result.ToString());
             }
         }
     }

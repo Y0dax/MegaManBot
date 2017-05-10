@@ -12,15 +12,16 @@ using MegaManDiscordBot.Services.Common;
 
 namespace MegaManDiscordBot
 { 
-    public class Globals
+    public static class Globals
     {
         public static void Initiate(Config config)
         {
-            Globals.WeatherKey = config.WeatherKey;
-            Globals.BreweryKey = config.BreweryKey;
-            Globals.GiphyKey = config.GiphyKey;
+            WeatherKey = config.WeatherKey;
+            BreweryKey = config.BreweryKey;
+            GiphyKey = config.GiphyKey;
+            Random = new Random();
         }
-
+        public static Random Random { get; set; }
         public static int xkcdNum { get; set; } = 1830;
         public static string WeatherKey { get; set; }
         public static string BreweryKey { get; set; }

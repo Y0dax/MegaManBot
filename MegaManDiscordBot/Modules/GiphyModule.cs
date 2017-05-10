@@ -9,9 +9,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MegaManDiscordBot.Modules.Public
+namespace MegaManDiscordBot.Modules
 {
-    class GiphyModule : ModuleBase<SocketCommandContext>
+    public class GiphyModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://api.giphy.com/v1/gifs/";
         static string key = $"api_key={Globals.GiphyKey}";
@@ -24,9 +24,9 @@ namespace MegaManDiscordBot.Modules.Public
             
             Uri uri = new Uri($"{baseUrl}search?q={searchString.Replace(" ", "+")}&{key}");
             ApiResponse<GiphySearchResult> response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
-            if (response.Success && response.responseObject.Data.Any())
+            if (response.Success)
             {
-                await ReplyAsync(response.responseObject.Data.RandomItem().Url);
+                await ReplyAsync(response.responseObject.Data.Any() ? response.responseObject.Data.RandomItem().Url : "Sorry, I couldn't find a gif for that.");
             }
         }
 
@@ -50,9 +50,9 @@ namespace MegaManDiscordBot.Modules.Public
         {
             Uri uri = new Uri($"{baseUrl}translate?s={searchString.Replace(" ", "+")}&{key}");
             ApiResponse<GiphySingleResult> response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(uri);
-            if (response.Success && response.responseObject.Data != null)
+            if (response.Success)
             {
-                await ReplyAsync(response.responseObject.Data.Url);
+                await ReplyAsync(response.responseObject.Data != null ? response.responseObject.Data.Url : "Sorry, I couldn't find a gif for that.");
             }
         }
 

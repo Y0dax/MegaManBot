@@ -8,19 +8,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MegaManDiscordBot.Modules.Public
+namespace MegaManDiscordBot.Modules
 {
-    class XKCDModule : ModuleBase<SocketCommandContext>
+    public class XKCDModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://xkcd.com/";
-        static Random rand = new Random();
 
         [Command("xkcdtoday")]
         [Remarks("Get the most recent xkcd")]
         [MinPermissions(AccessLevel.User)]
         public async Task GetLatestXKCD()
         {
-            Uri uri = new Uri(baseUrl + "info.0.json");
+            Uri uri = new Uri($"{baseUrl}info.0.json");
             ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Url != null)
             {
@@ -35,7 +34,7 @@ namespace MegaManDiscordBot.Modules.Public
         [MinPermissions(AccessLevel.User)]
         public async Task GetRandomXKCD()
         {
-            Uri uri = new Uri(String.Format("{0}{1}/info.0.json", baseUrl, rand.Next(1, Globals.xkcdNum)));
+            Uri uri = new Uri($"{baseUrl}{Globals.Random.Next(1, Globals.xkcdNum)}/info.0.json");
             ApiResponse<XKCD> response = await new ApiHandler<XKCD>().GetJSONAsync(uri);
             if (response.Success && response.responseObject.Url != null)
             {

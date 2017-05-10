@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MegaManDiscordBot.Modules.Public
+namespace MegaManDiscordBot.Modules
 {
-    class WeatherModule : ModuleBase<SocketCommandContext>
+    public class WeatherModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://api.openweathermap.org/data/2.5/";
 
@@ -20,7 +20,7 @@ namespace MegaManDiscordBot.Modules.Public
         public async Task WeatherSearch([Remainder]string searchString)
         {
 
-            Uri uri = new Uri(String.Format("{0}weather?q={1}&units=imperial&appid={2}", baseUrl, searchString.Replace(" ", "+"), Globals.WeatherKey));
+            Uri uri = new Uri($"{baseUrl}weather?q={searchString.Replace(" ", "+")}&units=imperial&appid={Globals.WeatherKey}");
             ApiResponse<WeatherObj> response = await new ApiHandler<WeatherObj>().GetJSONAsync(uri);
             if (response.Success && response.responseObject != null)
             {
@@ -33,7 +33,11 @@ namespace MegaManDiscordBot.Modules.Public
                 //    $"Humidity: {r.Main.humidity.ToString()}"
                 //    );
 
-                await ReplyAsync($"The current weather condition for {Format.Bold(r.Name)} is {r.Weather.First().Description}. The tempurature is {r.Main.temp.ToString()} degrees with a low of {r.Main.temp_min.ToString()} and a high of {r.Main.temp_max.ToString()}. Humidity is {r.Main.humidity.ToString()}%.");
+                await ReplyAsync($"The current weather condition for {Format.Bold(r.Name)} is {r.Weather.First().Description}. The tempurature is {r.Main.Temp.ToString()} degrees with a low of {r.Main.MinTemp.ToString()} and a high of {r.Main.MaxTemp.ToString()}. Humidity is {r.Main.Humidity.ToString()}%.");
+            }
+            else
+            {
+                await ReplyAsync("Sorry, I couldn't find weather for that location.");
             }
         }
 
@@ -46,15 +50,15 @@ namespace MegaManDiscordBot.Modules.Public
         public class Main
         {
             [JsonProperty("temp")]
-            public double temp { get; set; }
+            public double Temp { get; set; }
             [JsonProperty("pressure")]
-            public int pressure { get; set; }
+            public int Pressure { get; set; }
             [JsonProperty("humidity")]
-            public int humidity { get; set; }
+            public int Humidity { get; set; }
             [JsonProperty("temp_min")]
-            public double temp_min { get; set; }
+            public double MinTemp { get; set; }
             [JsonProperty("temp_max")]
-            public double temp_max { get; set; }
+            public double MaxTemp { get; set; }
         }
 
         public class Wind

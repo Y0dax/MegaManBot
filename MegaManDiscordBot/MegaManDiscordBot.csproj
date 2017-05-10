@@ -154,11 +154,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
-    <Compile Include="Modules\Public\BreweryModule.cs" />
-    <Compile Include="Modules\Public\GiphyModule.cs" />
-    <Compile Include="Modules\Public\PublicModule.cs" />
-    <Compile Include="Modules\Public\WeatherModule.cs" />
-    <Compile Include="Modules\Public\XKCDModule.cs" />
+    <Compile Include="Modules\BreweryModule.cs" />
+    <Compile Include="Modules\GiphyModule.cs" />
+    <Compile Include="Modules\GoogleModule.cs" />
+    <Compile Include="Modules\IMDBModule.cs" />
+    <Compile Include="Modules\UtilityModule.cs" />
+    <Compile Include="Modules\RedditModule.cs" />
+    <Compile Include="Modules\WeatherModule.cs" />
+    <Compile Include="Modules\XKCDModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Common\AccessLevel.cs" />
