@@ -11,27 +11,48 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using MegaManDiscordBot;
 
 namespace MegaManDiscordBot.Modules
 {
     public class UtilityModule : ModuleBase<SocketCommandContext>
     {
-        [Command("test")]
-        public async Task Test()
+        [Command("help"), Alias("commands")]
+        [Summary("Display bot commands")]
+        //[MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Help()
         {
-            await ReplyAsync("Test");
+            StringBuilder commands = new StringBuilder();
+            Program._commandService.Modules.ToList().ForEach(m =>
+            {
+                commands.Append(Format.Bold($"\n{m.Name.Remove(m.Name.Length - 6)}\n"));
+                Program._commandService.Commands.Where(c => c.Module == m).ToList().ForEach(async c =>
+                {
+                    var result = await c.CheckPreconditionsAsync(Context);
+                    if(result.IsSuccess)
+                        commands.Append($"!{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
+                });
+            });
+
+            var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("71cd40", 16)))
+           .WithTitle("Mega Man Commands")
+           .WithDescription(commands.ToString());
+
+            await ReplyAsync("", false, embed);
         }
 
-        [Command("echo")]
-        [Remarks("Make the bot repeat a phrase")]
-        //[MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task ListInput([Remainder]string text)
+        [Command("uptime")]
+        [Summary("Get the bots uptime")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Uptime()
         {
-            await ReplyAsync(text);
+            TimeSpan t = DateTime.Now - Globals.bootTime;
+            await ReplyAsync($"{t.Days} Days, {t.Hours} Hours, {t.Minutes} Minutes");
         }
 
         [Command("info")]
-        [Remarks("Get info on a user")]
+        [Summary("Get user info")]
+        [Remarks("<user>")]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task UserInfo([Remainder]SocketGuildUser user)
         {
@@ -45,14 +66,16 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("pick")]
-        [Remarks("Picks a random item from a list")]
+        [Summary("Picks a random item from a list")]
+        [Remarks("<items>")]
         public async Task PickFromList(params string[] items)
         {
             await ReplyAsync($"I choose {items.ToList().RandomItem()}!");
         }
 
         [Command("teams")]
-        [Remarks("Splits all users in current voice channel into two teams")]
+        [Summary("Creates teams from users in current channel")]
+        [Remarks("<number_of_teams>")]
         public async Task MakeTeams(int numTeams)
         {
             List<SocketGuildUser> Users = Context.Guild.GetUser(Context.User.Id).VoiceChannel.Users.ToList().Shuffle();
@@ -65,7 +88,8 @@ namespace MegaManDiscordBot.Modules
             StringBuilder reply = new StringBuilder();
             int teamIndex = 1;
 
-            Teams.ForEach(t => {
+            Teams.ForEach(t =>
+            {
                 reply.Append(Format.Bold($"Team {teamIndex++}:\n"));
                 t.ForEach(u =>
                 {

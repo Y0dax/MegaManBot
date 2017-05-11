@@ -15,7 +15,7 @@ namespace MegaManDiscordBot.Modules
         static string baseUrl = $"http://xkcd.com/";
 
         [Command("xkcdtoday")]
-        [Remarks("Get the most recent xkcd")]
+        [Summary("Get current xkcd")]
         [MinPermissions(AccessLevel.User)]
         public async Task GetLatestXKCD()
         {
@@ -30,7 +30,7 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("xkcd")]
-        [Remarks("Get a random xkcd")]
+        [Summary("Get a random xkcd")]
         [MinPermissions(AccessLevel.User)]
         public async Task GetRandomXKCD()
         {

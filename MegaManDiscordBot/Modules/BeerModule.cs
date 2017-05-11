@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 
 namespace MegaManDiscordBot.Modules
 {
-    public class BreweryModule : ModuleBase<SocketCommandContext>
+    public class BeerModule : ModuleBase<SocketCommandContext>
     {
         static string baseUrl = $"http://api.brewerydb.com/v2/";
         static string key = $"key={Globals.BreweryKey}";
 
         [Command("beer")]
-        [Remarks("Search for a beer")]
+        [Summary("Search for a beer")]
+        [Remarks("<beer name>")]
         [MinPermissions(AccessLevel.User)]
         public async Task BeerSearch([Remainder]string searchString)
         {
@@ -28,14 +29,17 @@ namespace MegaManDiscordBot.Modules
                 if (response.responseObject.data != null && response.responseObject.data.Any())
                 {
                     var beer = response.responseObject.data.Where(p => p.name == searchString).FirstOrDefault() ?? response.responseObject.data.First();
-                    await ReplyAsync(
-                        $"I found {Format.Bold(beer.name)}!\n\n" +
-                        Format.Code($"Style: {beer.style.name}\n" +
-                        (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
-                        (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
-                        (beer.description != null ? $"\n{beer.description}\n\n" : "")) +
-                        (beer.labels?.medium != null ? $"{beer.labels.medium}" : "")
-                        );
+
+                    var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
+                            .WithTitle($"I found {Format.Bold(beer.name)}!")
+                            .WithImageUrl((beer.labels?.medium != null ? $"{beer.labels.medium}" : ""))
+                            .WithDescription($"Style: {beer.style.name}\n" +
+                                                        (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
+                                                        (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
+                                                        (beer.description != null ? $"\n{beer.description}\n\n" : ""));
+
+                    await ReplyAsync("", false, embed);
+
                 }
                 else
                 {
@@ -45,7 +49,7 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("beer")]
-        [Remarks("Get a random beer")]
+        [Summary("Get a random beer")]
         [MinPermissions(AccessLevel.User)]
         public async Task RandomBeer()
         {

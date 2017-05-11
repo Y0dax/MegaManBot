@@ -17,7 +17,8 @@ namespace MegaManDiscordBot.Modules
         static string key = $"api_key={Globals.GiphyKey}";
 
         [Command("gif")]
-        [Remarks("Search for a giphy")]
+        [Summary("Search for a giphy")]
+        [Remarks("<search text>")]
         [MinPermissions(AccessLevel.User)]
         public async Task GiphySearch([Remainder]string searchString)
         {
@@ -31,7 +32,7 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("gif")]
-        [Remarks("Get a random giphy")]
+        [Summary("Get a random giphy")]
         [MinPermissions(AccessLevel.User)]
         public async Task GiphyRandom()
         {
@@ -44,7 +45,8 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("tgif")]
-        [Remarks("Get a giphy by translation")]
+        [Summary("Get a giphy by translation")]
+        [Remarks("<search text>")]
         [MinPermissions(AccessLevel.User)]
         public async Task GiphyTranslate([Remainder]string searchString)
         {

@@ -15,7 +15,8 @@ namespace MegaManDiscordBot.Modules
         static string baseUrl = $"http://api.openweathermap.org/data/2.5/";
 
         [Command("weather")]
-        [Remarks("Search for current weather")]
+        [Summary("Get weather")]
+        [Remarks("<location>")]
         [MinPermissions(AccessLevel.User)]
         public async Task WeatherSearch([Remainder]string searchString)
         {

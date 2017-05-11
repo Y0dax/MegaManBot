@@ -22,6 +22,7 @@ namespace MegaManDiscordBot
             Random = new Random();
         }
         public static Random Random { get; set; }
+        public static DateTime bootTime { get; set; } = DateTime.Now;
         public static int xkcdNum { get; set; } = 1830;
         public static string WeatherKey { get; set; }
         public static string BreweryKey { get; set; }
@@ -35,6 +36,7 @@ namespace MegaManDiscordBot
         private DiscordSocketClient _client;
         private Config _config;
         private CommandHandler _handler;
+        public static CommandService _commandService = new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = false });
 
 
         public async Task Start()
@@ -52,7 +54,6 @@ namespace MegaManDiscordBot
             Globals.Initiate(_config);
 
             var serviceProvider = ConfigureServices();
-
             // Login and connect to Discord.
             await _client.LoginAsync(TokenType.Bot, _config.Token);
             await _client.StartAsync();
@@ -70,7 +71,7 @@ namespace MegaManDiscordBot
             var services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_config)
-                .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = false }));
+                .AddSingleton(_commandService);
             var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
             // Autowire and create these dependencies now
             //provider.GetService<LogAdaptor>();

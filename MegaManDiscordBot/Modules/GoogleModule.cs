@@ -12,7 +12,8 @@ namespace MegaManDiscordBot.Modules
         string baseUrl = "http://www.google.com/";
 
         [Command("google")]
-        [Remarks("Get the first google result")]
+        [Summary("Search goolge")]
+        [Remarks("<seach text>")]
         public async Task GiphySearch([Remainder]string searchString)
         {
             await ReplyAsync($"{baseUrl}search?q={searchString.Replace(" ", "+")}");

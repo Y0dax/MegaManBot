@@ -15,7 +15,8 @@ namespace MegaManDiscordBot.Modules
         static string baseUrl = "https://www.reddit.com";
 
         [Command("reddit")]
-        [Remarks("Get top reddit posts given a subreddit")]
+        [Summary("Get hot reddit posts")]
+        [Remarks("<sub>")]
         [MinPermissions(AccessLevel.User)]
         public async Task GetHotPosts([Remainder]string searchString)
         {
