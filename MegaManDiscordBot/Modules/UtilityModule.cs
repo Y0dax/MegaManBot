@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using MegaManDiscordBot;
+using System.IO;
 
 namespace MegaManDiscordBot.Modules
 {
@@ -40,6 +41,15 @@ namespace MegaManDiscordBot.Modules
 
             await ReplyAsync("", false, embed);
         }
+
+        //[Command("avatar")]
+        //[Summary("")]
+        //[MinPermissions(AccessLevel.ServerOwner)]
+        //public async Task AvatarUpdate()
+        //{
+        //    var avatar = new FileStream(@"", FileMode.Open);
+        //    await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Discord.Image(avatar));
+        //}
 
         [Command("uptime")]
         [Summary("Get the bots uptime")]
