@@ -18,28 +18,25 @@ namespace MegaManDiscordBot.Services.Common
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<ApiResponse<T>> GetJSONAsync(Uri uri)
+        public async Task<T> GetJSONAsync(Uri uri)
         {
-            ApiResponse<T> apiResponse = new ApiResponse<T>();
             try
             {
                 HttpResponseMessage response = await client.GetAsync(uri);
-                apiResponse.Success = response.IsSuccessStatusCode;
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    apiResponse.responseObject = JsonConvert.DeserializeObject<T>(responseContent);
-                    apiResponse.Success = response.IsSuccessStatusCode;
+                    return JsonConvert.DeserializeObject<T>(responseContent);
+                    //apiResponse.Success = response.IsSuccessStatusCode;
                 }
+                return default(T);
             }
             catch(Exception e)
             {
-                apiResponse.Success = false;
+                return default(T);
+                //apiResponse.Success = false;
             }
-
-            return apiResponse;
         }
-
     }
 
     public class ApiResponse<T>

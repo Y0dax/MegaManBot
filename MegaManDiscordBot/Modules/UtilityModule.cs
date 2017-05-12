@@ -51,30 +51,6 @@ namespace MegaManDiscordBot.Modules
         //    await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Discord.Image(avatar));
         //}
 
-        [Command("uptime")]
-        [Summary("Get the bots uptime")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task Uptime()
-        {
-            TimeSpan t = DateTime.Now - Globals.bootTime;
-            await ReplyAsync($"{t.Days} Days, {t.Hours} Hours, {t.Minutes} Minutes");
-        }
-
-        [Command("info")]
-        [Summary("Get user info")]
-        [Remarks("<user>")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task UserInfo([Remainder]SocketGuildUser user)
-        {
-            StringBuilder returnMesage = new StringBuilder();
-            returnMesage.Append($" {user.Mention} joined the {user.Guild.Name} on {user.JoinedAt.Value.ToLocalTime()}.");
-            returnMesage.Append($" {user.Nickname ?? user.Username} is currently {user.Status}");
-            returnMesage.Append(user.Game.Value.Name != null ? $" and is playing {user.Game.Value.Name}." : "");
-            //returnMesage.Append(user.Status?.Value == "online" && user.JoinedAt != null ? $" They were last active at {user.LastActivityAt.Value.ToLocalTime()}." : "");
-
-            await ReplyAsync(returnMesage.ToString());
-        }
-
         [Command("pick")]
         [Summary("Picks a random item from a list")]
         [Remarks("<items>")]

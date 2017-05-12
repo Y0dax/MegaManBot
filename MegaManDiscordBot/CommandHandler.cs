@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using MegaManDiscordBot.Services.Configuration;
 using MegaManDiscordBot.Services.Common;
 using MegaManDiscordBot.Modules;
+using Serilog;
+using UtilityBot.Services.Logging;
+using Serilog.Core;
 
 namespace MegaManDiscordBot
 {
@@ -18,6 +21,7 @@ namespace MegaManDiscordBot
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _client;
         private readonly Config _config;
+        private readonly ILogger _logger;
 
         public CommandHandler(IServiceProvider provider)
         {
@@ -25,8 +29,10 @@ namespace MegaManDiscordBot
             _client = _provider.GetService<DiscordSocketClient>();
             _client.MessageReceived += ProcessCommandAsync;
             _commands = _provider.GetService<CommandService>();
-            //_commands.Log += PrettyConsole.Log();
+            var log = _provider.GetService<LogAdaptor>();
+            _commands.Log += log.LogCommand;
             _config = _provider.GetService<Config>();
+            _logger = _provider.GetService<Logger>().ForContext<CommandService>();
         }
 
         public async Task ConfigureAsync()
@@ -50,6 +56,7 @@ namespace MegaManDiscordBot
 
                 //if (!result.IsSuccess) // If execution failed, reply with the error message.
                 //    await context.Channel.SendMessageAsync(result.ToString());
+                _logger.Debug($"Invoked {msg} in {context.Channel} with {result}");
             }
         }
     }

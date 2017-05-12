@@ -9,6 +9,11 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MegaManDiscordBot.Services.Configuration;
 using MegaManDiscordBot.Services.Common;
+using SpotifyAPI.Web.Enums;
+using SpotifyAPI.Web.Auth;
+using SpotifyAPI.Web.Models;
+using UtilityBot.Services.Logging;
+using MegaManDiscordBot.Services.Music;
 
 namespace MegaManDiscordBot
 { 
@@ -19,8 +24,21 @@ namespace MegaManDiscordBot
             WeatherKey = config.WeatherKey;
             BreweryKey = config.BreweryKey;
             GiphyKey = config.GiphyKey;
+            SpotifyClientId = config.SpotifyClientId;
+            SpotifyClientSecret = config.SpotifyClientSecret;
             Random = new Random();
+
+           SpotifyToken = new ClientCredentialsAuth()
+            {
+                ClientId = SpotifyClientId,
+                ClientSecret = SpotifyClientSecret,
+                Scope = Scope.PlaylistReadPrivate,
+            }.DoAuth();
+
         }
+        public static Token SpotifyToken { get; set; }
+        public static string SpotifyClientId { get; set; }
+        public static string SpotifyClientSecret { get; set; }
         public static Random Random { get; set; }
         public static DateTime bootTime { get; set; } = DateTime.Now;
         public static int xkcdNum { get; set; } = 1830;
@@ -28,6 +46,7 @@ namespace MegaManDiscordBot
         public static string BreweryKey { get; set; }
         public static string GiphyKey { get; set; }
     }
+
     public class Program
     {
         public static void Main(string[] args) =>
@@ -57,7 +76,6 @@ namespace MegaManDiscordBot
             // Login and connect to Discord.
             await _client.LoginAsync(TokenType.Bot, _config.Token);
             await _client.StartAsync();
-            _client.Log += LogAsync;
 
             _handler = new CommandHandler(serviceProvider);
             await _handler.ConfigureAsync();
@@ -71,17 +89,17 @@ namespace MegaManDiscordBot
             var services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_config)
-                .AddSingleton(_commandService);
+                .AddSingleton(_commandService)
+                .AddSingleton<MusicService>()
+                .AddSingleton(LogAdaptor.CreateLogger())
+                .AddSingleton<LogAdaptor>();
             var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
             // Autowire and create these dependencies now
-            //provider.GetService<LogAdaptor>();
+            provider.GetService<LogAdaptor>();
+            provider.GetService<MusicService>();
+
             return provider;
         }
 
-        private Task LogAsync(LogMessage msg)
-        {
-            PrettyConsole.LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
-            return Task.CompletedTask;
-        }
     }
 }

@@ -21,6 +21,12 @@ namespace MegaManDiscordBot.Services.Configuration
         [JsonProperty("giphy_Key")]
         public string GiphyKey { get; set; } = "dc6zaTOxFJmzC";
 
+        [JsonProperty("SpotifyClientId")]
+        public string SpotifyClientId { get; set; } = "";
+
+        [JsonProperty("SpotifyClientSecret")]
+        public string SpotifyClientSecret { get; set; } = "";
+
         [JsonProperty("command_activation_strings")]
         public string CommandString { get; set; } = "!";
 
