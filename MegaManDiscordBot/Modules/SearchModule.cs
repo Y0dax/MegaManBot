@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static MegaManDiscordBot.Modules.Models.SearchModels;
-using static MegaManDiscordBot.Modules.Models.SearchModels.BreweryDBModels;
+using static MegaManDiscordBot.Modules.Models.BreweryDBModels;
 using static MegaManDiscordBot.Modules.Models.SearchModels.RedditModels;
 using static MegaManDiscordBot.Modules.Models.SearchModels.WeatherModels;
 
@@ -34,12 +34,12 @@ namespace MegaManDiscordBot.Modules
                     var beer = response.data.Where(p => p.name == searchString).FirstOrDefault() ?? response.data.First();
 
                     var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
-                            .WithTitle($"I found {Format.Bold(beer.name)}!")
-                            .WithImageUrl((beer.labels?.medium != null ? $"{beer.labels.medium}" : ""))
-                            .WithDescription($"Style: {beer.style.name}\n" +
-                                                        (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
-                                                        (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
-                                                        (beer.description != null ? $"\n{beer.description}\n\n" : ""));
+                                                    .WithTitle($"I found {Format.Bold(beer.name)}!")
+                                                    .WithImageUrl((beer.labels?.medium != null ? $"{beer.labels.medium}" : ""))
+                                                    .WithDescription($"Style: {beer.style.name}\n" +
+                                                    (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
+                                                    (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
+                                                    (beer.description != null ? $"\n{beer.description}\n\n" : ""));
 
                     await ReplyAsync("", false, embed);
                 }
@@ -56,7 +56,7 @@ namespace MegaManDiscordBot.Modules
         public async Task RandomBeer()
         {
             Uri uri = new Uri($"{beerUrl}beer/random?key={Globals.BreweryKey}");
-            var response = await new ApiHandler<BreweryRandomResponse>().GetJSONAsync(uri);
+            var response = await new ApiHandler<BreweryRandomBeer>().GetJSONAsync(uri);
             if (response?.data != null)
             {
                 var beer = response.data;
@@ -70,6 +70,30 @@ namespace MegaManDiscordBot.Modules
                                                 (beer.description != null ? $"\n{beer.description}\n\n" : ""));
 
                 await ReplyAsync("", false, embed);
+
+            }
+        }
+
+        [Command("brewery")]
+        [Summary("Get a random brewery")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task RandomBrewery()
+        {
+            Uri uri = new Uri($"{beerUrl}brewery/random?key={Globals.BreweryKey}");
+            var response = await new ApiHandler<BreweryRandomBrewery>().GetJSONAsync(uri);
+            if (response?.data != null)
+            {
+                var brewery = response.data;
+
+                //var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
+                //                                .WithTitle($"I found {Format.Bold(beer.name)}!")
+                //                                .WithImageUrl((beer.labels?.medium != null ? $"{beer.labels.medium}" : ""))
+                //                                .WithDescription($"Style: {beer.style.name}\n" +
+                //                                (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
+                //                                (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
+                //                                (beer.description != null ? $"\n{beer.description}\n\n" : ""));
+
+                //await ReplyAsync("", false, embed);
 
             }
         }
