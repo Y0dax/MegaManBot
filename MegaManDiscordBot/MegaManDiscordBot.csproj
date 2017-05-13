@@ -189,6 +189,7 @@
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Modules\Models\BreweryDBModels.cs" />
     <Compile Include="Modules\Models\SearchModels.cs" />
+    <Compile Include="Modules\MusicModule.cs" />
     <Compile Include="Modules\SearchModule.cs" />
     <Compile Include="Modules\MediaModule.cs" />
     <Compile Include="Modules\Models\MediaModels.cs" />
