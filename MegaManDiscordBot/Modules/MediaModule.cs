@@ -29,7 +29,7 @@ namespace MegaManDiscordBot.Modules
             var response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
             if (response != null)
             {
-                await ReplyAsync(response.Data.Any() ? response.Data.RandomItem().Url : "Sorry, I couldn't find a gif for that.");
+                await ReplyAsync(response.Data.Any() ? response.Data.RandomItemLowerBias().Url : "Sorry, I couldn't find a gif for that.");
             }
         }
 
