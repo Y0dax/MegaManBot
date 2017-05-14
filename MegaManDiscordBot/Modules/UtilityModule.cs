@@ -31,7 +31,7 @@ namespace MegaManDiscordBot.Modules
                 {
                     var result = await c.CheckPreconditionsAsync(Context);
                     if(result.IsSuccess)
-                        commands.Append($"!{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
+                        commands.Append($"{Globals.CommandKey}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
                 });
             });
 

@@ -196,7 +196,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
+    <Compile Include="Modules\DonateModule.cs" />
     <Compile Include="Modules\Models\BreweryDBModels.cs" />
+    <Compile Include="Modules\Models\DomainModels\GuildOptions.cs" />
+    <Compile Include="Modules\Models\DomainModels\PollModels.cs" />
     <Compile Include="Modules\Models\SearchModels.cs" />
     <Compile Include="Modules\MusicModule.cs" />
     <Compile Include="Modules\SearchModule.cs" />
@@ -208,12 +211,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Common\AccessLevel.cs" />
     <Compile Include="Services\Common\ApiHandler.cs" />
+    <Compile Include="Services\Common\Database.cs" />
     <Compile Include="Services\Common\Extensions.cs" />
     <Compile Include="Services\Logging\LogAdapter.cs" />
     <Compile Include="Services\Common\MinPermissionsAttribute.cs" />
     <Compile Include="Services\Common\PrettyConsole.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Services\Music\MusicService.cs" />
+    <Compile Include="Services\Polls\PollService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
