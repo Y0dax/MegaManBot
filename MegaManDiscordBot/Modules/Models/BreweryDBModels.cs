@@ -10,7 +10,7 @@ namespace MegaManDiscordBot.Modules.Models
     public class BreweryDBModels
     {
 
-        public class BreweryRandomBeer
+        public class RandomBeerResponse
         {
             [JsonProperty("status")]
             public string status { get; set; }
@@ -20,7 +20,7 @@ namespace MegaManDiscordBot.Modules.Models
             public string message { get; set; }
         }
 
-        public class BreweryRandomBrewery
+        public class RandomBreweryResponse
         {
             [JsonProperty("status")]
             public string status { get; set; }
@@ -30,12 +30,20 @@ namespace MegaManDiscordBot.Modules.Models
             public string message { get; set; }
         }
 
-        public class BrewerySearchResponse
+        public class SearchBeerResponse
         {
             [JsonProperty("status")]
             public string status { get; set; }
             [JsonProperty("data")]
             public List<Beer> data { get; set; }
+        }
+
+        public class SearchBreweryResponse
+        {
+            [JsonProperty("status")]
+            public string status { get; set; }
+            [JsonProperty("data")]
+            public List<Brewery> data { get; set; }
         }
 
         public class Beer
@@ -144,7 +152,7 @@ namespace MegaManDiscordBot.Modules.Models
         {
             [JsonProperty("id")]
             public string Id { get; set; }
-            [JsonProperty("ame")]
+            [JsonProperty("name")]
             public string Name { get; set; }
             [JsonProperty("isOrganic")]
             public string IsOrganic { get; set; }
@@ -160,8 +168,8 @@ namespace MegaManDiscordBot.Modules.Models
             public string Website { get; set; }
             [JsonProperty("established")]
             public string Established { get; set; }
-            [JsonProperty("image")]
-            public Images Image { get; set; }
+            [JsonProperty("images")]
+            public Images Images { get; set; }
         }
 
         public class Location

@@ -20,16 +20,16 @@ namespace MegaManDiscordBot.Modules
 
         [Command("beer")]
         [Summary("Search for a beer")]
-        [Remarks("<beer name>")]
+        [Remarks("<beer_name>")]
         [MinPermissions(AccessLevel.User)]
         public async Task BeerSearch([Remainder]string searchString)
         {
 
-            Uri uri = new Uri($"{beerUrl}search?q={searchString.Replace(" ", "+")}&type=beer&key={Globals.BreweryKey}");
-            var response = await new ApiHandler<BrewerySearchResponse>().GetJSONAsync(uri);
+            Uri uri = new Uri($"{beerUrl}search?q={searchString.Replace(" ", "+")}&type=beer&withIngredients=Y&key={Globals.BreweryKey}");
+            var response = await new ApiHandler<SearchBeerResponse>().GetJSONAsync(uri);
             if (response != null && response.status == "success")
             {
-                if (response.data != null && response.data.Any())
+                if (response?.data != null && response.data.Any())
                 {
                     var beer = response.data.Where(p => p.name == searchString).FirstOrDefault() ?? response.data.First();
 
@@ -55,8 +55,8 @@ namespace MegaManDiscordBot.Modules
         [MinPermissions(AccessLevel.User)]
         public async Task RandomBeer()
         {
-            Uri uri = new Uri($"{beerUrl}beer/random?key={Globals.BreweryKey}");
-            var response = await new ApiHandler<BreweryRandomBeer>().GetJSONAsync(uri);
+            Uri uri = new Uri($"{beerUrl}beer/random?key={Globals.BreweryKey}&withIngredients=Y");
+            var response = await new ApiHandler<RandomBeerResponse>().GetJSONAsync(uri);
             if (response?.data != null)
             {
                 var beer = response.data;
@@ -73,28 +73,63 @@ namespace MegaManDiscordBot.Modules
 
             }
         }
+        [Command("brewery")]
+        [Summary("Search for a brewery")]
+        [Remarks("<brewery_name>")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task SearchBrewery([Remainder]string searchString)
+        {
+            Uri uri = new Uri($"{beerUrl}search?q={searchString.Replace(" ", "+")}&type=brewery&withBreweries=Y&withLocations=Y&key={Globals.BreweryKey}");
+            var response = await new ApiHandler<SearchBreweryResponse>().GetJSONAsync(uri);
+            if (response?.data != null && response.data.Any())
+            {
+                var brewery = response.data.Where(p => p.Name == searchString).FirstOrDefault() ?? response.data.First();
+                var location = brewery.Locations?.Where(l => l.IsPrimary == "Y").First();
+
+                var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
+                                                .WithTitle($"I found {Format.Bold(brewery.Name)}!")
+                                                .WithImageUrl((brewery.Images?.medium != null ? $"{brewery.Images.medium}" : ""))
+                                                .WithDescription(brewery.Description + 
+                                                (brewery.Established != null ? $"Established: {brewery.Established}\n" : "") +
+                                                (location?.Name != null ? $"\nLocation:\n{location.Name}\n" : "") +
+                                                (location?.StreetAddress != null ? $"{location.StreetAddress}\n" : "") +
+                                                (location?.Locality != null ? $"{location.Locality} " : "") +
+                                                (location?.Region != null ? $"{location.Region} " : "") +
+                                                (location?.PostalCode != null ? $"{location.PostalCode}" : "") +
+                                                (location?.Country?.Name != null ? $"\n{location.Country.Name}" : ""))
+                                                .WithUrl(brewery.Website);
+
+                await ReplyAsync("", false, embed);
+
+            }
+        }
 
         [Command("brewery")]
         [Summary("Get a random brewery")]
         [MinPermissions(AccessLevel.User)]
         public async Task RandomBrewery()
         {
-            Uri uri = new Uri($"{beerUrl}brewery/random?key={Globals.BreweryKey}");
-            var response = await new ApiHandler<BreweryRandomBrewery>().GetJSONAsync(uri);
+            Uri uri = new Uri($"{beerUrl}brewery/random?WithLocations=Y&key={Globals.BreweryKey}");
+            var response = await new ApiHandler<RandomBreweryResponse>().GetJSONAsync(uri);
             if (response?.data != null)
             {
                 var brewery = response.data;
+                var location = brewery.Locations?.Where(l => l.IsPrimary == "Y").First();
 
-                //var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
-                //                                .WithTitle($"I found {Format.Bold(beer.name)}!")
-                //                                .WithImageUrl((beer.labels?.medium != null ? $"{beer.labels.medium}" : ""))
-                //                                .WithDescription($"Style: {beer.style.name}\n" +
-                //                                (beer.abv != null ? $"ABV: {beer.abv}%\n" : "") +
-                //                                (beer.IBU != null ? $"IBU's: {beer.IBU}\n" : "") +
-                //                                (beer.description != null ? $"\n{beer.description}\n\n" : ""));
+                var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("00a4e3", 16)))
+                                                .WithTitle($"I found {Format.Bold(brewery.Name)}!")
+                                                .WithImageUrl((brewery.Images?.medium != null ? $"{brewery.Images.medium}" : ""))
+                                                .WithDescription(brewery.Description +
+                                                (brewery.Established != null ? $"Established: {brewery.Established}\n" : "") +
+                                                (location?.Name != null ? $"\nLocation:\n{location.Name}\n" : "") +
+                                                (location?.StreetAddress != null ? $"{location.StreetAddress}\n" : "") +
+                                                (location?.Locality != null ? $"{location.Locality} " : "") +
+                                                (location?.Region != null ? $"{location.Region} " : "") +
+                                                (location?.PostalCode != null ? $"{location.PostalCode}" : "") +
+                                                (location?.Country?.Name != null ? $"\n{location.Country.Name}" : ""))
+                                                .WithUrl(brewery.Website);
 
-                //await ReplyAsync("", false, embed);
-
+                await ReplyAsync("", false, embed);
             }
         }
 
@@ -102,7 +137,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("google")]
         [Summary("Search goolge")]
-        [Remarks("<seach text>")]
+        [Remarks("<seach_text>")]
         public async Task GiphySearch([Remainder]string searchString)
         {
             await ReplyAsync($"{googleUrl}search?q={searchString.Replace(" ", "+")}");
@@ -142,7 +177,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("movie")]
         [Summary("Search for a movie")]
-        [Remarks("<search text>")]
+        [Remarks("<search_text>")]
         [MinPermissions(AccessLevel.User)]
         public async Task FindMovie([Remainder]string searchString)
         {
