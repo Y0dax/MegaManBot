@@ -14,6 +14,8 @@ using SpotifyAPI.Web.Auth;
 using SpotifyAPI.Web.Models;
 using UtilityBot.Services.Logging;
 using MegaManDiscordBot.Services.Music;
+using MongoDB.Driver;
+using MegaManDiscordBot.Services.Polls;
 
 namespace MegaManDiscordBot
 { 
@@ -55,6 +57,7 @@ namespace MegaManDiscordBot
             new Program().Start().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
+        private Database _database;
         private Config _config;
         private CommandHandler _handler;
         public static CommandService _commandService = new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = false });
@@ -73,6 +76,7 @@ namespace MegaManDiscordBot
 
             _config = Config.Load();
             Globals.Initiate(_config);
+            _database = new Database();
 
             var serviceProvider = ConfigureServices();
             // Login and connect to Discord.
@@ -88,16 +92,26 @@ namespace MegaManDiscordBot
 
         private IServiceProvider ConfigureServices()
         {
+
+            // Configure logging
+            //var logger = LogAdaptor.CreateLogger();
+            //var loggerFactory = new LoggerFactory();
+            //loggerFactory.AddProvider(new SerilogLoggerProvider(logger));
+
             var services = new ServiceCollection()
                 .AddSingleton(_client)
+                .AddSingleton(_database)
                 .AddSingleton(_config)
                 .AddSingleton(_commandService)
                 .AddSingleton<MusicService>()
+                .AddSingleton<PollService>()
                 .AddSingleton(LogAdaptor.CreateLogger())
+                //.AddSingleton(logger)
                 .AddSingleton<LogAdaptor>();
-            var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
+            var provider = services.BuildServiceProvider();//new DefaultServiceProviderFactory().CreateServiceProvider(services);
             // Autowire and create these dependencies now
             provider.GetService<LogAdaptor>();
+            provider.GetService<PollService>();
             provider.GetService<MusicService>();
 
             return provider;

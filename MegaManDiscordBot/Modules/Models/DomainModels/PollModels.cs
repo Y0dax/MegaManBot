@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MegaManDiscordBot.Modules.Models.DomainModels
 {
-    class PollModels
+    public class PollModels
     {
         public class Poll
         {
@@ -18,26 +18,22 @@ namespace MegaManDiscordBot.Modules.Models.DomainModels
             public UInt64 CreatorId { get; set; }
             public DateTime CreateDate { get; set; }
             public string Title { get; set; }
-            public List<PollOptions> Options { get; set; }
-            public List<PollVotes> Votes { get; set; }
+            public List<PollOption> Options { get; set; } = new List<PollOption>();
+            public List<PollVote> Votes { get; set; } = new List<PollVote>();
             public bool IsOpen { get; set; }
             public bool AllowAddOptions { get; set; }
         }
 
-        public class PollVotes
+        public class PollVote
         {
-            [BsonId]
-            public ObjectId VoteId { get; set; }
-            public ObjectId PollId { get; set; }
+            //public int VoteId { get; set; }
             public UInt64 UserId { get; set; }
-            public ObjectId OptionsId { get; set; }
+            public int OptionId { get; set; }
         }
 
-        public class PollOptions
+        public class PollOption
         {
-            [BsonId]
-            public ObjectId OptionId { get; set; }
-            public ObjectId PollId { get; set; }
+            public int OptionId { get; set; }
             public string OptionText { get; set; }
         }
     }

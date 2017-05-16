@@ -14,7 +14,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("echo")]
         [Summary("")]
-        [MinPermissions(AccessLevel.ServerOwner)]
+        [MinPermissions(AccessLevel.ServerMod)]
         public async Task Uptime([Remainder] string text)
         {
             await ReplyAsync(text);
@@ -35,6 +35,9 @@ namespace MegaManDiscordBot.Modules
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task UserInfo([Remainder]SocketGuildUser user)
         {
+            if (user == null)
+                return;
+
             StringBuilder returnMesage = new StringBuilder();
             returnMesage.Append($" {user.Mention} joined the {user.Guild.Name} on {user.JoinedAt.Value.ToLocalTime()}.");
             returnMesage.Append($" {user.Nickname ?? user.Username} is currently {user.Status}");

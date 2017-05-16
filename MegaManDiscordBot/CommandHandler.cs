@@ -12,6 +12,7 @@ using MegaManDiscordBot.Modules;
 using Serilog;
 using UtilityBot.Services.Logging;
 using Serilog.Core;
+using MongoDB.Driver;
 
 namespace MegaManDiscordBot
 {
@@ -20,6 +21,7 @@ namespace MegaManDiscordBot
         private readonly IServiceProvider _provider;
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _client;
+        private readonly Database _database;
         private readonly Config _config;
         private readonly ILogger _logger;
 
@@ -28,6 +30,7 @@ namespace MegaManDiscordBot
             _provider = provider;
             _client = _provider.GetService<DiscordSocketClient>();
             _client.MessageReceived += ProcessCommandAsync;
+            _database = _provider.GetService<Database>();
             _commands = _provider.GetService<CommandService>();
             var log = _provider.GetService<LogAdaptor>();
             _commands.Log += log.LogCommand;

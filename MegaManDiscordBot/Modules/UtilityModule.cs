@@ -7,17 +7,12 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MegaManDiscordBot.Services.Common;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
-using System.Diagnostics;
-using MegaManDiscordBot;
-using System.IO;
 
 namespace MegaManDiscordBot.Modules
 {
     public class UtilityModule : ModuleBase<SocketCommandContext>
     {
+
         [Command("help"), Alias("commands")]
         [Summary("Display bot commands")]
         //[MinPermissions(AccessLevel.ServerAdmin)]
