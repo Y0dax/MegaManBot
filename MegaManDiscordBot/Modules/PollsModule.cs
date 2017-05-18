@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using MegaManDiscordBot.Services.Common;
 using MegaManDiscordBot.Services.Polls;
 using MongoDB.Bson;
 using System;
@@ -25,6 +26,9 @@ namespace MegaManDiscordBot.Modules
         [Remarks("<\"title\"> <\"option_1\"> <\"option_2\"> ..")]
         public async Task MakePoll(string title, params string[] items)
         {
+            if (items.Count() > 20 || !items.Any())
+                return;
+
             List<PollOption> pollOptions = new List<PollOption>();
             int optionIndex = 1;
             foreach (var item in items)
@@ -32,10 +36,11 @@ namespace MegaManDiscordBot.Modules
                 pollOptions.Add(new PollOption { OptionId = optionIndex++, OptionText = item });
             }
             Poll poll = new Poll { Title = title, CreateDate = DateTime.Now, CreatorId = Context.User.Id, GuildId = Context.Guild.Id, IsOpen = true, AllowAddOptions = false, Options = pollOptions };
+
             await _pollService.AddPoll(poll);
 
             StringBuilder response = new StringBuilder();
-            response.Append($"Created poll {poll.PollId}\n\n{Format.Bold(poll.Title)}\n");
+            response.Append($"Created poll with ID: {poll.PollId}\n\n{Format.Bold(poll.Title)}\n");
             foreach (var option in poll.Options)
             {
                 response.Append($"{option.OptionId}. {option.OptionText}\n");
@@ -49,15 +54,14 @@ namespace MegaManDiscordBot.Modules
         [Remarks("<poll_id>")]
         public async Task ShowPoll(string _pollId)
         {
-            ObjectId pollId;
-            if (ObjectId.TryParse(_pollId, out pollId))
+            if (ObjectId.TryParse(_pollId, out ObjectId pollId))
             {
                 Poll poll = await _pollService.GetPoll(pollId);
                 if (poll == null) { await ReplyAsync("I couldn't find that poll."); return; }
                 if (poll.GuildId != Context.Guild.Id) { await ReplyAsync("That poll was not created by this guild."); return; }
 
                 StringBuilder response = new StringBuilder();
-                response.Append($"Poll {poll.PollId}\n\n{Format.Bold(poll.Title)}\n");
+                response.Append($"Poll {poll.PollId} by {Context.Guild.GetUser(poll.CreatorId)}\n\n{Format.Bold(poll.Title)}\n");
                 foreach (var option in poll.Options)
                 {
                     response.Append($"{option.OptionId}. {option.OptionText} | Votes: {(poll.Votes != null ? poll.Votes.Count(x => x.OptionId == option.OptionId) : 0)}\n");
@@ -65,27 +69,26 @@ namespace MegaManDiscordBot.Modules
 
                 await ReplyAsync(response.ToString());
             }
-
         }
 
         [Command("vote")]
         [Summary("Vote for a poll option")]
         [Remarks("<poll_id> <option_id>")]
-        public async Task PickFromList(string _pollId, int optionId)
+        public async Task VotePoll(string _pollId, int optionId)
         {
-            ObjectId pollId;
-            if (ObjectId.TryParse(_pollId, out pollId))
+            if (ObjectId.TryParse(_pollId, out ObjectId pollId))
             {
                 Poll poll = await _pollService.GetPoll(pollId);
                 if (poll == null) { await ReplyAsync("I couldn't find that poll."); return; }
                 if (poll.GuildId != Context.Guild.Id) { await ReplyAsync("That poll was not created by this guild."); return; }
                 var option = poll.Options.FirstOrDefault(x => x.OptionId == optionId);
                 if (option == null) { await ReplyAsync("That option Id does not exist on that poll."); return; }
+                if (!poll.IsOpen) { await ReplyAsync("That poll is closed."); return; }
 
                 //If vote exists, modify
-                if (poll.Votes.Any(v => v.UserId == Context.User.Id))
+                var vote = poll.Votes.FirstOrDefault(v => v.UserId == Context.User.Id);
+                if (vote != null)
                 {
-                    var vote = poll.Votes.FirstOrDefault(v => v.UserId == Context.User.Id);
                     if (vote.OptionId == optionId) { await ReplyAsync("You've already voted for that option."); return; }
 
                     var oldOption = poll.Options.FirstOrDefault(x => x.OptionId == vote.OptionId);
@@ -101,6 +104,67 @@ namespace MegaManDiscordBot.Modules
                 var result = await _pollService.AddVote(poll.PollId, new PollVote { OptionId = optionId, UserId = Context.User.Id });
                 if (result != null)
                     await ReplyAsync($"Added a vote for \"{option.OptionText}\".");
+            }
+        }
+
+        [Command("closepoll")]
+        [Summary("Close a poll - Must be the creator")]
+        [Remarks("<poll_id>")]
+        public async Task ClosePoll(string _pollId)
+        {
+            if (ObjectId.TryParse(_pollId, out ObjectId pollId))
+            {
+                var response = await _pollService.ClosePoll(pollId, Context.User.Id, Context.Guild.Id);
+                if (response != null)
+                {
+                    await ReplyAsync("Poll has been closed.");
+                }
+                else
+                {
+                    await ReplyAsync("Invalid poll or you do not have the authorization to close that poll.");
+                }
+            }
+        }
+
+        [Command("guildpolls")]
+        [Summary("Close a poll")]
+        public async Task GetGuildPolls()
+        {
+            var polls = await _pollService.GetGuildPolls(Context.Guild.Id);
+            if(polls != null && polls.Any())
+            {
+                StringBuilder response = new StringBuilder();
+                response.Append($"Most recent 10 polls in {Context.Guild.Name}\n");
+                int index = 1;
+                foreach(var poll in polls)
+                {
+                    response.Append($"{index++}. {poll.PollId} | {poll.Title} - Created on {poll.CreateDate.ToShortDateString()} by {Context.Guild.GetUser(poll.CreatorId)}\n");
+                }
+                await ReplyAsync(response.ToString());
+            }
+            else
+            {
+                await ReplyAsync("No polls found.");
+            }
+        }
+
+        [Command("deletepoll")]
+        [Summary("Delete a poll entirely")]
+        [Remarks("<poll_id>")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task DeletePoll(string _pollId)
+        {
+            if (ObjectId.TryParse(_pollId, out ObjectId pollId))
+            {
+                var result = await _pollService.DeletePoll(pollId, Context.Guild.Id);
+                if (result != null && result.IsAcknowledged)
+                {
+                    await ReplyAsync("Poll has been deleted.");
+                }
+                else
+                {
+                    await ReplyAsync("Invalid poll.");
+                }
             }
         }
 
