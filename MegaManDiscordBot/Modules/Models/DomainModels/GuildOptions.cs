@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace MegaManDiscordBot.Modules.Models.DomainModels
 {
-    class GuildOptions
+    public class GuildOptions
     {
         [BsonId]
         public UInt64 GuildId { get; set; }
         public string CommandString { get; set; } = ".";
-        public bool BreweryEnabled { get; set; } = true;
-        public bool GiphyEnabled { get; set; } = true;
-        public bool RedditEnabled { get; set; } = true;
-        public bool WeatherEnabled { get; set; } = true;
-        public bool GoogleEnabled { get; set; } = true;
-        public bool XKCDEnabled { get; set; } = true;
-        public bool IMDBEnabled { get; set; } = true;
+        public bool Brewery { get; set; } = true;
+        public bool Giphy { get; set; } = true;
+        public bool Reddit { get; set; } = true;
+        public bool Weather { get; set; } = true;
+        public bool Google { get; set; } = true;
+        public bool XKCD { get; set; } = true;
+        public bool IMDB { get; set; } = true;
+        public bool Polls { get; set; } = true;
     }
 }

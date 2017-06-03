@@ -16,6 +16,7 @@ using UtilityBot.Services.Logging;
 using MegaManDiscordBot.Services.Music;
 using MongoDB.Driver;
 using MegaManDiscordBot.Services.Polls;
+using MegaManDiscordBot.Services.Moderator;
 
 namespace MegaManDiscordBot
 { 
@@ -105,14 +106,16 @@ namespace MegaManDiscordBot
                 .AddSingleton(_commandService)
                 .AddSingleton<MusicService>()
                 .AddSingleton<PollService>()
+                .AddSingleton<GuildOptionsService>()
                 .AddSingleton(LogAdaptor.CreateLogger())
                 //.AddSingleton(logger)
                 .AddSingleton<LogAdaptor>();
             var provider = services.BuildServiceProvider();//new DefaultServiceProviderFactory().CreateServiceProvider(services);
             // Autowire and create these dependencies now
             provider.GetService<LogAdaptor>();
-            provider.GetService<PollService>();
             provider.GetService<MusicService>();
+            provider.GetService<PollService>();
+            provider.GetService<GuildOptionsService>();
 
             return provider;
         }

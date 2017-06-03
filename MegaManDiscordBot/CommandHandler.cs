@@ -13,6 +13,7 @@ using Serilog;
 using UtilityBot.Services.Logging;
 using Serilog.Core;
 using MongoDB.Driver;
+using MegaManDiscordBot.Services.Moderator;
 
 namespace MegaManDiscordBot
 {
@@ -24,6 +25,7 @@ namespace MegaManDiscordBot
         private readonly Database _database;
         private readonly Config _config;
         private readonly ILogger _logger;
+        private readonly GuildOptionsService _guildService;
 
         public CommandHandler(IServiceProvider provider)
         {
@@ -36,6 +38,7 @@ namespace MegaManDiscordBot
             _commands.Log += log.LogCommand;
             _config = _provider.GetService<Config>();
             _logger = _provider.GetService<Logger>().ForContext<CommandService>();
+            _guildService = provider.GetService<GuildOptionsService>();
         }
 
         public async Task ConfigureAsync()
@@ -50,9 +53,11 @@ namespace MegaManDiscordBot
                 return;
 
             var context = new SocketCommandContext(_client, msg);
+            var commandString = _guildService.GetCommandString(context.Guild.Id).Result;
+            if(commandString == null) commandString = _config.CommandString;
 
             int argPos = 0;
-            if (msg.HasStringPrefix(_config.CommandString, ref argPos) ||
+            if (msg.HasStringPrefix(commandString, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
                 var result = await _commands.ExecuteAsync(context, argPos, _provider);

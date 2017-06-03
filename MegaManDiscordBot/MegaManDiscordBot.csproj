@@ -214,6 +214,8 @@
     <Compile Include="Services\Common\ApiHandler.cs" />
     <Compile Include="Services\Common\Database.cs" />
     <Compile Include="Services\Common\Extensions.cs" />
+    <Compile Include="Services\Common\CheckEnabledAttribute.cs" />
+    <Compile Include="Services\Moderator\GuildOptionsService.cs" />
     <Compile Include="Services\Logging\LogAdapter.cs" />
     <Compile Include="Services\Common\MinPermissionsAttribute.cs" />
     <Compile Include="Services\Common\PrettyConsole.cs" />
