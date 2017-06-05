@@ -15,6 +15,7 @@ namespace MegaManDiscordBot.Services.Common
 
         public static T RandomItemLowerBias<T>(this List<T> list)
         {
+            if (!list.Any()) return default(T);
             int result = (int)(Math.Floor(Math.Abs(Globals.Random.NextDouble() - Globals.Random.NextDouble()) * (1 + list.Count - 0) + 0));
             return list[result];
         }

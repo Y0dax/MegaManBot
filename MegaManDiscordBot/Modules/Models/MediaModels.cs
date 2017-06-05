@@ -33,6 +33,15 @@ namespace MegaManDiscordBot.Modules.Models
 
                 [JsonProperty("url")]
                 public string Url { get; set; }
+
+                [JsonProperty("rating")]
+                public string Rating { get; set; }
+
+                [JsonProperty("bitly_url")]
+                public string BitlyUrl { get; set; }
+               
+                [JsonProperty("embed_url")]
+                public string EmbedUrl { get; set; }
             }
         }
 

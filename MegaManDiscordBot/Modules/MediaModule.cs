@@ -18,6 +18,7 @@ namespace MegaManDiscordBot.Modules
         static string giphyUrl = $"http://api.giphy.com/v1/gifs/";
         static string key = $"api_key={Globals.GiphyKey}";
 
+
         [Command("gif")]
         [Summary("Search for a giphy")]
         [Remarks("<search text>")]
@@ -25,7 +26,7 @@ namespace MegaManDiscordBot.Modules
         public async Task GiphySearch([Remainder]string searchString)
         {
             
-            Uri uri = new Uri($"{giphyUrl}search?q={searchString.Replace(" ", "+")}&{key}");
+            Uri uri = new Uri($"{giphyUrl}search?q={searchString.Replace(" ", "+")}&rating=pg-13&{key}");
             var response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
             if (response != null)
             {
@@ -33,12 +34,35 @@ namespace MegaManDiscordBot.Modules
             }
         }
 
+        [Command("gifnsfw")]
+        [Summary("Search for a nsfw giphy")]
+        [Remarks("<search text>")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task NSFWGiphySearch([Remainder]string searchString)
+        {
+            if (!Context.Channel.IsNsfw)
+            {
+                await ReplyAsync("Slow down there pal, try that out in a NSFW Channel.");
+                return;
+            }
+
+            Uri uri = new Uri($"{giphyUrl}search?q={searchString.Replace(" ", "+")}&rating=r&limit=40&{key}");
+            var response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
+            if (response?.Data != null)
+            {
+                var gifs = response.Data.Where(x => x.Rating.ToLower() == "r").ToList();
+                await ReplyAsync(gifs.Any() ? gifs.RandomItemLowerBias().Url : "Sorry, I couldn't find a gif for that.");
+            }
+        }
+
         [Command("gif")]
         [Summary("Get a random giphy")]
+        [Remarks("(optional) <nsfw>")]
         [MinPermissions(AccessLevel.User)]
         public async Task GiphyRandom()
         {
-            Uri uri = new Uri($"{giphyUrl}random?{key}");
+            Uri uri = new Uri($"{giphyUrl}random?rating=pg-13&{key}");
+
             var response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(uri);
             if (response?.Data != null)
             {

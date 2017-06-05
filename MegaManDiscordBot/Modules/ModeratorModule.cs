@@ -40,23 +40,23 @@ namespace MegaManDiscordBot.Modules
             await ReplyAsync($"{t.Days} Days, {t.Hours} Hours, {t.Minutes} Minutes");
         }
 
-        [Command("info")]
-        [Summary("Get user info")]
-        [Remarks("<user>")]
-        [MinPermissions(AccessLevel.ServerMod)]
-        public async Task UserInfo([Remainder]SocketGuildUser user)
-        {
-            if (user == null)
-                return;
+        //[Command("info")]
+        //[Summary("Get user info")]
+        //[Remarks("<user>")]
+        //[MinPermissions(AccessLevel.ServerMod)]
+        //public async Task UserInfo([Remainder]SocketGuildUser user)
+        //{
+        //    if (user == null)
+        //        return;
 
-            StringBuilder returnMesage = new StringBuilder();
-            returnMesage.Append($" {user.Mention} joined the {user.Guild.Name} on {user.JoinedAt.Value.ToLocalTime()}.");
-            returnMesage.Append($" {user.Nickname ?? user.Username} is currently {user.Status}");
-            returnMesage.Append(user.Game.Value.Name != null ? $" and is playing {user.Game.Value.Name}." : "");
-            //returnMesage.Append(user.Status?.Value == "online" && user.JoinedAt != null ? $" They were last active at {user.LastActivityAt.Value.ToLocalTime()}." : "");
+        //    StringBuilder returnMesage = new StringBuilder();
+        //    returnMesage.Append($" {user.Mention} joined the {user.Guild.Name} on {user.JoinedAt.Value.ToLocalTime()}.");
+        //    returnMesage.Append($" {user.Nickname ?? user.Username} is currently {user.Status}");
+        //    returnMesage.Append(user.Game.Value.Name != null ? $" and is playing {user.Game.Value.Name}." : "");
+        //    //returnMesage.Append(user.Status?.Value == "online" && user.JoinedAt != null ? $" They were last active at {user.LastActivityAt.Value.ToLocalTime()}." : "");
 
-            await ReplyAsync(returnMesage.ToString());
-        }
+        //    await ReplyAsync(returnMesage.ToString());
+        //}
 
         [Command("guildOptions")]
         [Summary("Show the guild options and customizations.")]
@@ -92,24 +92,24 @@ namespace MegaManDiscordBot.Modules
                 await ReplyAsync($"Prefix changed to \"{newPrefix}\"");
         }
 
-        [Command("disable")]
-        [Summary("Disable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
-        [Remarks("<module_name>")]
-        [MinPermissions(AccessLevel.ServerOwner)]
-        public async Task DisableModule(string moduleName)
-        {
+        //[Command("disable")]
+        //[Summary("Disable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
+        //[Remarks("<module_name>")]
+        //[MinPermissions(AccessLevel.ServerOwner)]
+        //public async Task DisableModule(string moduleName)
+        //{
 
-            await ReplyAsync($"");
-        }
+        //    await ReplyAsync($"");
+        //}
 
-        [Command("enable")]
-        [Summary("Enable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
-        [Remarks("<module_name>")]
-        [MinPermissions(AccessLevel.ServerOwner)]
-        public async Task EnableModule(string moduleName)
-        {
+        //[Command("enable")]
+        //[Summary("Enable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
+        //[Remarks("<module_name>")]
+        //[MinPermissions(AccessLevel.ServerOwner)]
+        //public async Task EnableModule(string moduleName)
+        //{
 
-            await ReplyAsync($"");
-        }
+        //    await ReplyAsync($"");
+        //}
     }
 }
