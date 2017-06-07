@@ -29,7 +29,7 @@ namespace MegaManDiscordBot
             GiphyKey = config.GiphyKey;
             SpotifyClientId = config.SpotifyClientId;
             SpotifyClientSecret = config.SpotifyClientSecret;
-            CommandKey = config.CommandString;
+            //CommandKey = config.CommandString;
             Random = new Random();
 
            SpotifyToken = new ClientCredentialsAuth()
@@ -41,7 +41,7 @@ namespace MegaManDiscordBot
 
         }
         public static Token SpotifyToken { get; set; }
-        public static string CommandKey { get; set; }
+        public const string CommandKey = "!";
         public static string SpotifyClientId { get; set; }
         public static string SpotifyClientSecret { get; set; }
         public static Random Random { get; set; }
@@ -72,7 +72,7 @@ namespace MegaManDiscordBot
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 MessageCacheSize = 100,
-                LogLevel = LogSeverity.Debug,
+                LogLevel = LogSeverity.Verbose,
             });
 
             _config = Config.Load();

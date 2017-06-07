@@ -31,9 +31,10 @@ namespace MegaManDiscordBot.Services.Common
                 }
                 return default(T);
             }
-            catch(Exception e)
+            catch
             {
                 return default(T);
+                
                 //apiResponse.Success = false;
             }
         }

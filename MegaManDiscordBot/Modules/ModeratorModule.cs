@@ -59,7 +59,7 @@ namespace MegaManDiscordBot.Modules
         //}
 
         [Command("guildOptions")]
-        [Summary("Show the guild options and customizations.")]
+        [Summary("Show the guild options and customizations")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task ShowGuildOptions()
         {
@@ -81,7 +81,7 @@ namespace MegaManDiscordBot.Modules
         }
 
         [Command("prefix")]
-        [Summary("Set a custom command prefix (Default is \".\")")]
+        [Summary("Set a custom command prefix. Default is \"" + Globals.CommandKey + "\"")]
         [Remarks("<prefix_char>")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task ChangePrefix(char newPrefix)

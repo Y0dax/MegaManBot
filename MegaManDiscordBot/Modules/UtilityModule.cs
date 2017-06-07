@@ -7,11 +7,18 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MegaManDiscordBot.Services.Common;
+using MegaManDiscordBot.Services.Moderator;
 
 namespace MegaManDiscordBot.Modules
 {
     public class UtilityModule : ModuleBase<SocketCommandContext>
     {
+        private static GuildOptionsService _guildService;
+
+        public UtilityModule(GuildOptionsService service)
+        {
+            _guildService = service;
+        }
 
         [Command("help"), Alias("commands")]
         [Summary("Display bot commands")]
@@ -19,6 +26,10 @@ namespace MegaManDiscordBot.Modules
         public async Task Help()
         {
             StringBuilder commands = new StringBuilder();
+
+            var commandString = await _guildService.GetCommandString(Context.Guild.Id);
+            if (commandString == null) commandString = Globals.CommandKey;
+
             Program._commandService.Modules.ToList().ForEach(m =>
             {
                 commands.Append(Format.Bold($"\n{m.Name.Remove(m.Name.Length - 6)}\n"));
@@ -26,7 +37,7 @@ namespace MegaManDiscordBot.Modules
                 {
                     var result = await c.CheckPreconditionsAsync(Context);
                     if(result.IsSuccess)
-                        commands.Append($"{Globals.CommandKey}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
+                        commands.Append($"{commandString}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
                 });
             });
 

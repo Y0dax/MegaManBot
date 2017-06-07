@@ -53,7 +53,7 @@ namespace MegaManDiscordBot
                 return;
 
             var context = new SocketCommandContext(_client, msg);
-            var commandString = _guildService.GetCommandString(context.Guild.Id).Result;
+            var commandString = await _guildService.GetCommandString(context.Guild.Id);
             if(commandString == null) commandString = _config.CommandString;
 
             int argPos = 0;
