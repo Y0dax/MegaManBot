@@ -34,30 +34,8 @@ namespace MegaManDiscordBot.Modules
             }
         }
 
-        [Command("gifnsfw")]
-        [Summary("Search for a nsfw giphy")]
-        [Remarks("<search text>")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task NSFWGiphySearch([Remainder]string searchString)
-        {
-            if (!Context.Channel.IsNsfw)
-            {
-                await ReplyAsync("Slow down there pal, try that out in a NSFW Channel.");
-                return;
-            }
-
-            Uri uri = new Uri($"{giphyUrl}search?q={searchString.Replace(" ", "+")}&rating=r&limit=40&{key}");
-            var response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
-            if (response?.Data != null)
-            {
-                var gifs = response.Data.Where(x => x.Rating.ToLower() == "r").ToList();
-                await ReplyAsync(gifs.Any() ? gifs.RandomItemLowerBias().Url : "Sorry, I couldn't find a gif for that.");
-            }
-        }
-
         [Command("gif")]
         [Summary("Get a random giphy")]
-        [Remarks("(optional) <nsfw>")]
         [MinPermissions(AccessLevel.User)]
         public async Task GiphyRandom()
         {
