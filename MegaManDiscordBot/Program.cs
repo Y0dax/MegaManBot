@@ -75,7 +75,7 @@ namespace MegaManDiscordBot
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 MessageCacheSize = 100,
-                LogLevel = LogSeverity.Verbose,
+                LogLevel = LogSeverity.Info,
             });
 
             _config = Config.Load();
@@ -90,6 +90,10 @@ namespace MegaManDiscordBot
             _handler = new CommandHandler(serviceProvider);
             await _handler.ConfigureAsync();
 
+
+            await Task.Delay(3000);
+            await _client.SetGameAsync("Jump and Shoot");
+            
             // Block this program until it is closed.
             await Task.Delay(-1);
         }

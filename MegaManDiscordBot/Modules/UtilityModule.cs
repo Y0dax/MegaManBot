@@ -33,10 +33,10 @@ namespace MegaManDiscordBot.Modules
             Program._commandService.Modules.ToList().ForEach(m =>
             {
                 commands.Append(Format.Bold($"\n{m.Name.Remove(m.Name.Length - 6)}\n"));
-                Program._commandService.Commands.Where(c => c.Module == m).ToList().ForEach(async c =>
+                Program._commandService.Commands.Where(c => c.Module == m).ToList().ForEach(c =>
                 {
-                    var result = await c.CheckPreconditionsAsync(Context);
-                    if(result.IsSuccess)
+                    //var result = await c.CheckPreconditionsAsync(Context);
+                    //if(result.IsSuccess)
                         commands.Append($"{commandString}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
                 });
             });
