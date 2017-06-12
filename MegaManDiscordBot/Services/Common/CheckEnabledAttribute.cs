@@ -31,7 +31,7 @@ namespace MegaManDiscordBot.Services.Common
                 var isEnabled = Extensions.GetPropValue(options.Modules, _moduleName);
                 if (!(bool)isEnabled)
                 {
-                    return PreconditionResult.FromError("Insufficient permissions.");
+                    return PreconditionResult.FromError("Module disabled.");
                 }
             }
             return PreconditionResult.FromSuccess();

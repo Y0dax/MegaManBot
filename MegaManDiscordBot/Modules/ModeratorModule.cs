@@ -59,7 +59,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("options")]
         [Summary("Show the bot options")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
+        [MinPermissions(AccessLevel.User)]
         public async Task ShowGuildOptions()
         {
             var guildOptions = await _guildService.GetGuildOptions(Context.Guild.Id);
@@ -104,7 +104,7 @@ namespace MegaManDiscordBot.Modules
             }
 
             await _guildService.UpdateModule(Context.Guild.Id, moduleName, false);
-            await ReplyAsync($"{moduleName} has been disabled.");
+            await ReplyAsync($"The {moduleName.ToLower()} module has been disabled.");
         }
 
         [Command("enable")]
@@ -121,7 +121,7 @@ namespace MegaManDiscordBot.Modules
             }
 
             await _guildService.UpdateModule(Context.Guild.Id, moduleName, true);
-            await ReplyAsync($"{moduleName} has been enabled.");
+            await ReplyAsync($"The {moduleName.ToLower()} module has been enabled.");
         }
 
         public async Task ModuleNotFound()

@@ -213,7 +213,7 @@ namespace MegaManDiscordBot.Modules
             {
                 var r = response;
 
-                await ReplyAsync($"The current weather condition for {Format.Bold(r.Name)} is {r.Weather.First().Description}. The tempurature is {r.Main.Temp.ToString()} degrees with a low of {r.Main.MinTemp.ToString()} and a high of {r.Main.MaxTemp.ToString()}. Humidity is {r.Main.Humidity.ToString()}%.");
+                await ReplyAsync($"The current weather condition for {Format.Bold(r.Name)} is {r.Weather.First().Description}. The tempurature is {r.Main.Temp.ToString()} degrees with a high of {r.Main.MaxTemp.ToString()} and a low of {r.Main.MinTemp.ToString()}. Humidity is {r.Main.Humidity.ToString()}%.");
             }
         }
 
