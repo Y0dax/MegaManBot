@@ -22,9 +22,9 @@ namespace MegaManDiscordBot.Modules
         [Summary("Search for a beer")]
         [Remarks("<beer_name>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Brewery))]
         public async Task BeerSearch([Remainder]string searchString)
         {
-
             Uri uri = new Uri($"{beerUrl}search?q={searchString.Replace(" ", "+")}&type=beer&withIngredients=Y&key={Globals.BreweryKey}");
             var response = await new ApiHandler<SearchBeerResponse>().GetJSONAsync(uri);
             if (response != null && response.status == "success")
@@ -53,6 +53,7 @@ namespace MegaManDiscordBot.Modules
         [Command("beer")]
         [Summary("Get a random beer")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Brewery))]
         public async Task RandomBeer()
         {
             Uri uri = new Uri($"{beerUrl}beer/random?key={Globals.BreweryKey}&withIngredients=Y");
@@ -77,6 +78,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Search for a brewery")]
         [Remarks("<brewery_name>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Brewery))]
         public async Task SearchBrewery([Remainder]string searchString)
         {
             Uri uri = new Uri($"{beerUrl}search?q={searchString.Replace(" ", "+")}&type=brewery&withBreweries=Y&withLocations=Y&key={Globals.BreweryKey}");
@@ -107,6 +109,7 @@ namespace MegaManDiscordBot.Modules
         [Command("brewery")]
         [Summary("Get a random brewery")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Brewery))]
         public async Task RandomBrewery()
         {
             Uri uri = new Uri($"{beerUrl}brewery/random?WithLocations=Y&key={Globals.BreweryKey}");
@@ -138,7 +141,9 @@ namespace MegaManDiscordBot.Modules
         [Command("google")]
         [Summary("Search goolge")]
         [Remarks("<seach_text>")]
-        public async Task GiphySearch([Remainder]string searchString)
+        [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Google))]
+        public async Task GoogleSearch([Remainder]string searchString)
         {
             await ReplyAsync($"{googleUrl}search?q={searchString.Replace(" ", "+")}");
         }
@@ -149,6 +154,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Get hot reddit posts")]
         [Remarks("<sub>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Reddit))]
         public async Task GetHotPosts([Remainder]string searchString)
         {
             Uri uri = new Uri($"{redditUrl}/r/{searchString}/hot/.json?limit=5");
@@ -179,6 +185,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Search for a movie")]
         [Remarks("<search_text>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.IMDB))]
         public async Task FindMovie([Remainder]string searchString)
         {
 
@@ -196,6 +203,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Get weather")]
         [Remarks("<location>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Weather))]
         public async Task WeatherSearch([Remainder]string searchString)
         {
 

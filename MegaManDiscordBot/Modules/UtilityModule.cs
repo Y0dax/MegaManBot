@@ -22,7 +22,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("help"), Alias("commands")]
         [Summary("Display bot commands")]
-        //[MinPermissions(AccessLevel.ServerAdmin)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Help()
         {
             StringBuilder commands = new StringBuilder();

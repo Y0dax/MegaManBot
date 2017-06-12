@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,5 +26,14 @@ namespace MegaManDiscordBot.Services.Common
             return list.OrderBy(a => Guid.NewGuid()).ToList();
         }
 
+        public static string GetPropertyName<T>(Expression<Func<T>> propertyExpression)
+        {
+            return (propertyExpression.Body as MemberExpression).Member.Name;
+        }
+
+        public static object GetPropValue(object src, string propName)
+        {
+            return src.GetType().GetProperty(propName).GetValue(src, null);
+        }
     }
 }

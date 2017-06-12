@@ -24,6 +24,8 @@ namespace MegaManDiscordBot.Modules
         [Command("poll")]
         [Summary("Create a new poll")]
         [Remarks("<\"title\"> <\"option_1\"> <\"option_2\"> ..")]
+        [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task MakePoll(string title, params string[] items)
         {
             if (items.Count() > 20 || !items.Any())
@@ -52,6 +54,8 @@ namespace MegaManDiscordBot.Modules
         [Command("showpoll")]
         [Summary("Show a poll's info")]
         [Remarks("<poll_id>")]
+        [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task ShowPoll(string _pollId)
         {
             if (ObjectId.TryParse(_pollId, out ObjectId pollId))
@@ -74,6 +78,8 @@ namespace MegaManDiscordBot.Modules
         [Command("vote")]
         [Summary("Vote for a poll option")]
         [Remarks("<poll_id> <option_id>")]
+        [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task VotePoll(string _pollId, int optionId)
         {
             if (ObjectId.TryParse(_pollId, out ObjectId pollId))
@@ -110,6 +116,8 @@ namespace MegaManDiscordBot.Modules
         [Command("closepoll")]
         [Summary("Close a poll - Must be the creator")]
         [Remarks("<poll_id>")]
+        [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task ClosePoll(string _pollId)
         {
             if (ObjectId.TryParse(_pollId, out ObjectId pollId))
@@ -128,6 +136,8 @@ namespace MegaManDiscordBot.Modules
 
         [Command("guildpolls")]
         [Summary("Close a poll")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task GetGuildPolls()
         {
             var polls = await _pollService.GetGuildPolls(Context.Guild.Id);
@@ -152,6 +162,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Delete a poll entirely")]
         [Remarks("<poll_id>")]
         [MinPermissions(AccessLevel.ServerMod)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Polls))]
         public async Task DeletePoll(string _pollId)
         {
             if (ObjectId.TryParse(_pollId, out ObjectId pollId))

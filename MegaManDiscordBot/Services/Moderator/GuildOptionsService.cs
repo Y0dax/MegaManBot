@@ -13,12 +13,14 @@ using System.Threading.Tasks;
 
 namespace MegaManDiscordBot.Services.Moderator
 {
-    public class GuildOptionsService
+    public sealed class GuildOptionsService
     {
         private readonly IServiceProvider _provider;
         private readonly Database _dbHandler;
         private readonly ILogger _logger;
         private IMongoCollection<GuildOptions> _guildOptions;
+
+
 
         public GuildOptionsService(IServiceProvider provider)
         {
@@ -52,7 +54,15 @@ namespace MegaManDiscordBot.Services.Moderator
         {
             var filter = Builders<GuildOptions>.Filter.Eq(x => x.GuildId, guildId);
             var update = Builders<GuildOptions>.Update.Set<string>(e => e.CommandString, prefix.ToString());
-            var response = await _guildOptions.UpdateOneAsync(filter, update, options: new UpdateOptions { IsUpsert = true });
+            var response = await _guildOptions.UpdateOneAsync(filter, update);
+            return response;
+        }
+
+        public async Task<UpdateResult> UpdateModule(UInt64 guildId, string moduleName, bool enabled)
+        {
+            var filter = Builders<GuildOptions>.Filter.Eq(x => x.GuildId, guildId);
+            var update = Builders<GuildOptions>.Update.Set("Modules." + moduleName, enabled);
+            var response = await _guildOptions.UpdateOneAsync(filter, update);
             return response;
         }
 

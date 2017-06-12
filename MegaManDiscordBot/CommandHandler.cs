@@ -14,6 +14,7 @@ using UtilityBot.Services.Logging;
 using Serilog.Core;
 using MongoDB.Driver;
 using MegaManDiscordBot.Services.Moderator;
+using MegaManDiscordBot.Modules.Models.DomainModels;
 
 namespace MegaManDiscordBot
 {
@@ -51,21 +52,40 @@ namespace MegaManDiscordBot
             var msg = pMsg as SocketUserMessage;
             if (msg == null)
                 return;
-
-            var context = new SocketCommandContext(_client, msg);
-            var commandString = await _guildService.GetCommandString(context.Guild.Id);
-            if(commandString == null) commandString = _config.CommandString;
-
             int argPos = 0;
-            if (msg.HasStringPrefix(commandString, ref argPos) ||
-                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
-            {
-                var result = await _commands.ExecuteAsync(context, argPos, _provider);
+            IResult result = null;
+            var context = new SocketCommandContext(_client, msg);
 
-                //if (!result.IsSuccess) // If execution failed, reply with the error message.
-                //    await context.Channel.SendMessageAsync(result.ToString());
-                _logger.Debug($"Invoked {msg} in {context.Channel} with {result}");
+            var commandString = await _guildService.GetCommandString(context.Guild.Id);
+
+            if (commandString != null)
+            {
+                if (msg.HasStringPrefix(commandString, ref argPos) || msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                {
+                    result = await _commands.ExecuteAsync(context, argPos, _provider);
+                    _logger.Debug($"Invoked {msg} in {context.Channel} with {result}");
+                    //if (!result.IsSuccess) // If execution failed, reply with the error message.
+                    //    await context.Channel.SendMessageAsync(result.ToString());
+                }
+
             }
+            else //Use default command string and create a guildOptions
+            {
+                commandString = _config.CommandString;
+
+                var updateResponse = await _guildService.UpdateGuildOptions(new GuildOptions { GuildId = context.Guild.Id });
+                if (updateResponse.IsAcknowledged)
+                {
+                    if (msg.HasStringPrefix(commandString, ref argPos) || msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                    {
+                        result = await _commands.ExecuteAsync(context, argPos, _provider);
+                        _logger.Debug($"Invoked {msg} in {context.Channel} with {result}");
+                    }
+                }
+            }
+
+            
+
         }
     }
 }

@@ -32,8 +32,7 @@ namespace MegaManDiscordBot.Modules
 
         [Command("uptime")]
         [Summary("Get the bots uptime")]
-        //[CheckEnabled("Reddit", _guildService)]
-        [MinPermissions(AccessLevel.ServerMod)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Uptime()
         {
             TimeSpan t = DateTime.Now - Globals.bootTime;
@@ -58,22 +57,21 @@ namespace MegaManDiscordBot.Modules
         //    await ReplyAsync(returnMesage.ToString());
         //}
 
-        [Command("guildOptions")]
-        [Summary("Show the guild options and customizations")]
-        [MinPermissions(AccessLevel.ServerMod)]
+        [Command("options")]
+        [Summary("Show the bot options")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task ShowGuildOptions()
         {
             var guildOptions = await _guildService.GetGuildOptions(Context.Guild.Id);
-            if (guildOptions == null) return;
             StringBuilder reply = new StringBuilder();
             reply.Append(Format.Bold($"Guild Options For {Context.Guild.Name}:\n\n"));
             reply.Append($"Command Prefix: \"{guildOptions.CommandString}\"\n\n");
             reply.Append(Format.Bold("Modules:\n"));
-            foreach (var prop in guildOptions.GetType().GetProperties())
+            foreach (var prop in guildOptions.Modules.GetType().GetProperties())
             {
-                if(prop.PropertyType == typeof(bool))
+                if (prop.PropertyType == typeof(bool))
                 {
-                    reply.Append($"{prop.Name} : {((bool)prop.GetValue(guildOptions) ? "Enabled" : "False")}\n");
+                    reply.Append($"{prop.Name} : {((bool)prop.GetValue(guildOptions.Modules) ? "Enabled" : "Disabled")}\n");
                 }
             }
 
@@ -83,7 +81,7 @@ namespace MegaManDiscordBot.Modules
         [Command("prefix")]
         [Summary("Set a custom command prefix. Default is \"" + Globals.CommandKey + "\"")]
         [Remarks("<prefix_char>")]
-        [MinPermissions(AccessLevel.ServerMod)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task ChangePrefix(char newPrefix)
         {
             var response = await _guildService.UpdatePrefix(Context.Guild.Id, newPrefix);
@@ -92,24 +90,53 @@ namespace MegaManDiscordBot.Modules
                 await ReplyAsync($"Prefix changed to \"{newPrefix}\"");
         }
 
-        //[Command("disable")]
-        //[Summary("Disable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
-        //[Remarks("<module_name>")]
-        //[MinPermissions(AccessLevel.ServerOwner)]
-        //public async Task DisableModule(string moduleName)
-        //{
+        [Command("disable")]
+        [Summary("Disable a module")]
+        [Remarks("<module_name>")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task DisableModule(string moduleName)
+        {
+            var propertyExists = Globals.ModuleNames.GetType().GetProperties().Any(x => x.Name == moduleName);
+            if (!propertyExists)
+            {
+                await ModuleNotFound();
+                return;
+            }
 
-        //    await ReplyAsync($"");
-        //}
+            await _guildService.UpdateModule(Context.Guild.Id, moduleName, false);
+            await ReplyAsync($"{moduleName} has been disabled.");
+        }
 
-        //[Command("enable")]
-        //[Summary("Enable a module. Choose from: Brewery, Giphy, Reddit, Weather, XKCD, Google, IMDB, and Polls.")]
-        //[Remarks("<module_name>")]
-        //[MinPermissions(AccessLevel.ServerOwner)]
-        //public async Task EnableModule(string moduleName)
-        //{
+        [Command("enable")]
+        [Summary("Enable a module")]
+        [Remarks("<module_name>")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task EnableModule(string moduleName)
+        {
+            var propertyExists = Globals.ModuleNames.GetType().GetProperties().Any(x => x.Name == moduleName);
+            if (!propertyExists)
+            {
+                await ModuleNotFound();
+                return;
+            }
 
-        //    await ReplyAsync($"");
-        //}
+            await _guildService.UpdateModule(Context.Guild.Id, moduleName, true);
+            await ReplyAsync($"{moduleName} has been enabled.");
+        }
+
+        public async Task ModuleNotFound()
+        {
+            StringBuilder reply = new StringBuilder();
+            reply.Append($"That module does not exist. This command is case-sensitive. Try one of these:\n");
+            foreach (var prop in Globals.ModuleNames.GetType().GetProperties())
+            {
+                if (prop.PropertyType == typeof(bool))
+                {
+                    reply.Append($"{prop.Name}, ");//TODO: this will output an extra comma
+                }
+            }
+
+            await ReplyAsync(reply.ToString());
+        }
     }
 }

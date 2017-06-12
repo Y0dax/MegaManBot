@@ -17,6 +17,7 @@ using MegaManDiscordBot.Services.Music;
 using MongoDB.Driver;
 using MegaManDiscordBot.Services.Polls;
 using MegaManDiscordBot.Services.Moderator;
+using MegaManDiscordBot.Modules.Models.DomainModels;
 
 namespace MegaManDiscordBot
 { 
@@ -31,6 +32,7 @@ namespace MegaManDiscordBot
             SpotifyClientSecret = config.SpotifyClientSecret;
             //CommandKey = config.CommandString;
             Random = new Random();
+            ModuleNames = new CommandModules();
 
            SpotifyToken = new ClientCredentialsAuth()
             {
@@ -50,6 +52,7 @@ namespace MegaManDiscordBot
         public static string WeatherKey { get; set; }
         public static string BreweryKey { get; set; }
         public static string GiphyKey { get; set; }
+        public static CommandModules ModuleNames { get; set; }
     }
 
     public class Program

@@ -23,6 +23,7 @@ namespace MegaManDiscordBot.Modules
         [Summary("Search for a giphy")]
         [Remarks("<search text>")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Giphy))]
         public async Task GiphySearch([Remainder]string searchString)
         {
             
@@ -36,7 +37,8 @@ namespace MegaManDiscordBot.Modules
 
         [Command("gif")]
         [Summary("Get a random giphy")]
-        [MinPermissions(AccessLevel.User)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        [CheckEnabled(nameof(Globals.ModuleNames.Giphy))]
         public async Task GiphyRandom()
         {
             Uri uri = new Uri($"{giphyUrl}random?rating=pg-13&{key}");
@@ -53,6 +55,7 @@ namespace MegaManDiscordBot.Modules
         [Command("xkcdtoday")]
         [Summary("Get current xkcd")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.XKCD))]
         public async Task GetLatestXKCD()
         {
             Uri uri = new Uri($"{xkcdUrl}info.0.json");
@@ -68,6 +71,7 @@ namespace MegaManDiscordBot.Modules
         [Command("xkcd")]
         [Summary("Get a random xkcd")]
         [MinPermissions(AccessLevel.User)]
+        [CheckEnabled(nameof(Globals.ModuleNames.XKCD))]
         public async Task GetRandomXKCD()
         {
             Uri uri = new Uri($"{xkcdUrl}{Globals.Random.Next(1, Globals.xkcdNum)}/info.0.json");
