@@ -39,6 +39,25 @@ namespace MegaManDiscordBot.Modules
             await ReplyAsync($"{t.Days} Days, {t.Hours} Hours, {t.Minutes} Minutes");
         }
 
+        [Command("shutdown")]
+        [Alias("die")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task Shutdown()
+        {
+            try
+            {
+                await ReplyAsync("Shutting down.");
+            }
+            catch
+            {
+                // ignored
+            }
+            await Task.Delay(2000);
+            Environment.Exit(0);
+        }
+
+
+
         //[Command("info")]
         //[Summary("Get user info")]
         //[Remarks("<user>")]

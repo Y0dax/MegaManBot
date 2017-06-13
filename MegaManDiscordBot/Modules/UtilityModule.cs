@@ -14,9 +14,11 @@ namespace MegaManDiscordBot.Modules
     public class UtilityModule : ModuleBase<SocketCommandContext>
     {
         private static GuildOptionsService _guildService;
+        private static IServiceProvider _provider;
 
-        public UtilityModule(GuildOptionsService service)
+        public UtilityModule(GuildOptionsService service, IServiceProvider provider)
         {
+            _provider = provider;
             _guildService = service;
         }
 
@@ -25,26 +27,36 @@ namespace MegaManDiscordBot.Modules
         [MinPermissions(AccessLevel.User)]
         public async Task Help()
         {
-            StringBuilder commands = new StringBuilder();
+            string Extract(string s) { return (s.Remove(s.Length - "Module".Length)); };
+            StringBuilder response = new StringBuilder();
+            SortedDictionary<string, List<CommandInfo>> ModuleDict = new SortedDictionary<string, List<CommandInfo>>();
 
             var commandString = await _guildService.GetCommandString(Context.Guild.Id);
             if (commandString == null) commandString = Globals.CommandKey;
 
-            Program._commandService.Modules.ToList().ForEach(m =>
+            Program._commandService.Modules.ToList().ForEach(m => { ModuleDict.Add(m.Name, new List<CommandInfo>()); });
+
+            var tasks = Program._commandService.Commands.Select(async c =>
             {
-                commands.Append(Format.Bold($"\n{m.Name.Remove(m.Name.Length - 6)}\n"));
-                Program._commandService.Commands.Where(c => c.Module == m).ToList().ForEach(c =>
-                {
-                    //var result = await c.CheckPreconditionsAsync(Context);
-                    //if(result.IsSuccess)
-                        commands.Append($"{commandString}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n");
-                });
+                var result = await c.CheckPreconditionsAsync(Context, _provider);
+                if (result.IsSuccess)
+                    ModuleDict[c.Module.Name].Add(c);
             });
+
+            await Task.WhenAll(tasks);
+
+            foreach (KeyValuePair<string, List<CommandInfo>> entry in ModuleDict)
+            {
+                if (entry.Value.Any())
+                {
+                    response.Append(Format.Bold($"\n{Extract(entry.Key)}\n"));
+                    entry.Value.ForEach(c => { response.Append($"{commandString}{Format.Bold($"{c.Name} {c.Remarks ?? ""}")} - {c.Summary}\n"); });
+                }
+            }
 
             var embed = new EmbedBuilder().WithColor(new Color(Convert.ToUInt32("71cd40", 16)))
            .WithTitle("Mega Man Commands")
-           .WithDescription(commands.ToString());
-
+           .WithDescription(response.ToString());
             await ReplyAsync("", false, embed);
         }
 
