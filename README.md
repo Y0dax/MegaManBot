@@ -1,6 +1,6 @@
 # MegaManBot
 
-MegaManBot is a Discord bot with a several of fun and useful commands. It is currently growing and preparing to be made a public bot!
+MegaManBot is a Discord bot prototype with a some fun commands.
 
 ## Features
 * Customizable command prefix
